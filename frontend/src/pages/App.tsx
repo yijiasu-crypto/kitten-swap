@@ -13,19 +13,28 @@ import {
   Row,
   Table,
 } from 'react-bootstrap';
+import { useWeb3React } from '@web3-react/core';
+import Web3 from 'web3';
+import { injected } from '../web3/hooks';
 
 const renderVerticalPadding = (height: number) => (
   <Row style={{height}}></Row>
 );
 
-const renderHeader = () => (
-  <Row>
+const Header = () => {
+  const web3Context = useWeb3React();
+  const startConnect = async () => {
+    await web3Context.activate(injected);
+  }
+  return (
+    <Row>
     <Col className="header-col">
       <h2>🐱 KittenSwap</h2>
-      <Button variant="outline-primary">Connect MetaMask</Button>{' '}
+      <Button variant="outline-primary" onClick={startConnect}>Connect MetaMask</Button>{' '}
     </Col>
   </Row>
-);
+  );
+}
 
 const renderSwapInput = (direction: 'from' | 'to') => (
   <>
@@ -77,10 +86,13 @@ const renderPricePanel = () => (
 );
 
 function App() {
+  const web3 = useWeb3React<Web3>();
+  console.log(web3);
+
   return (
     <Container>
       <Row className="large-vertical-padding" />
-      {renderHeader()}
+      <Header />
       {renderVerticalPadding(10)}
       <Row>
         <Col className="no-padding" xs={8}>{renderSwapPanel()}</Col>

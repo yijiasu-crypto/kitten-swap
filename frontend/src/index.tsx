@@ -6,9 +6,18 @@ import './index.css';
 import App from './pages/App';
 import reportWebVitals from './reportWebVitals';
 
+import { Web3ReactProvider } from '@web3-react/core';
+import { getWeb3Library } from './web3';
+import Web3Context from './web3/context';
+
+
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <Web3ReactProvider getLibrary={getWeb3Library}>
+      <Web3Context>
+        <App />
+      </Web3Context>
+    </Web3ReactProvider>
   </React.StrictMode>,
   document.getElementById('root')
 );
