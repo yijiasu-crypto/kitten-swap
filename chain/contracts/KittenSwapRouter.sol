@@ -2,6 +2,7 @@
 pragma solidity >=0.4.22 <0.9.0;
 
 import "./interface/IExchangeAdapter.sol";
+import "./uniswap/IERC20.sol";
 
 contract KittenSwapRouter {
 
@@ -51,7 +52,18 @@ contract KittenSwapRouter {
       address to,
       uint deadline
   ) external returns (uint[] memory amounts) {
+    require(path.length == 2, 'Only support direct swapping');
+    address tokenIn = path[0];
+    address tokenOut = path[1];
+    (, uint adapterIdxUsed) = getBestQuote(tokenIn, tokenOut, amountIn);
 
+    IExchangeAdapter adapter = IExchangeAdapter(_adapters[adapterIdxUsed]);
+
+    // // tranfer tokens to adapter
+    require(IERC20(tokenIn).transferFrom(msg.sender, address(adapter), amountIn));
+
+    // ask adapter to perform the swap
+    return adapter.swapExactTokensForTokens(amountIn, amountOutMin, path, to, deadline);
   }
 
 

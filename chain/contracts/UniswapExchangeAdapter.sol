@@ -4,6 +4,7 @@ pragma solidity >=0.4.22 <0.9.0;
 import "./uniswap/IUniswapV2Router02.sol";
 import "./uniswap/IUniswapV2Factory.sol";
 import "./uniswap/IUniswapV2Pair.sol";
+import "./uniswap/IERC20.sol";
 
 import "./interface/IExchangeAdapter.sol";
 
@@ -59,5 +60,17 @@ contract UniswapExchangeAdapter is IExchangeAdapter {
       (uint reseverIn, uint reserveOut) = tokenIn < tokenOut ? (reserve1, reserve0) : (reserve0, reserve1);
       amountOut = getAmountOut(amountIn, reseverIn, reserveOut);
     }
+
+    function swapExactTokensForTokens(
+        uint amountIn,
+        uint amountOutMin,
+        address[] calldata path,
+        address to,
+        uint deadline
+    ) override external returns (uint[] memory amounts) {
+      IERC20(path[0]).approve(address(uniswapRouter), 2**256 - 1);
+      return uniswapRouter.swapExactTokensForTokens(amountIn, amountOutMin, path, to, deadline);
+    }
+
 
 }

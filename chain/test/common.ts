@@ -27,8 +27,29 @@ const sushiswapRouterAddress = '0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506';    
 const uniswapPairInitCode = '0x96e8ac4277198ff8b6f785478aa9a39f403cb768dd02cbee326c3e7da348845f';
 const sushiswapPairInitCode = '0xe18a34eb0e04b04f7a0ac29a6e80748dca96319b42c54d679cb821dca90c6303';
 
+const toBN = web3.utils.toBN;
+
+const calculateOutAmount = ({
+  inReserve,
+  outReserve,
+  inAmount,
+}: {
+  inReserve: BN;
+  outReserve: BN;
+  inAmount: BN;
+}) => {
+
+  const inputAmountWithFee = inAmount.mul(toBN(997));
+  const numerator = inputAmountWithFee.mul(outReserve);
+  const denominator = inReserve.mul(toBN(1000)).add(inputAmountWithFee); //JSBI.add(JSBI.multiply(inputReserve.raw, _1000), inputAmountWithFee)
+  const outAmount = numerator.div(denominator);
+
+  return outAmount;
+
+};
 
 export {
+  toBN,
   getDaiAddress,
   getWETHAddress,
   getUniTokenPairAddress,
@@ -38,5 +59,6 @@ export {
   sushiswapFactoryAddress,
   sushiswapRouterAddress,
   uniswapPairInitCode,
-  sushiswapPairInitCode
+  sushiswapPairInitCode,
+  calculateOutAmount
 };

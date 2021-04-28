@@ -6,6 +6,7 @@ import {
   UniswapExchangeAdapterInstance,
 } from '../types/truffle-contracts';
 import {
+  calculateOutAmount,
   getDaiAddress,
   getUniTokenPairAddress,
   getWETHAddress,
@@ -76,21 +77,17 @@ contract('ExchangeAdapter For Uniswap', async (accounts) => {
 
   it('off-chain price quote calculation should be correct', async () => {
     const toBN = web3.utils.toBN;
-    const inputReserve = reserve1;
-    const outputReserve = reserve0;
-    const inputAmount = toBN(1_000_000);
+    const inReserve = reserve1;
+    const outReserve = reserve0;
+    const inAmount = toBN(1_000_000);
 
-    const inputAmountWithFee = inputAmount.mul(toBN(997));
-    const numerator = inputAmountWithFee.mul(outputReserve);
-    const denominator = inputReserve.mul(toBN(1000)).add(inputAmountWithFee); //JSBI.add(JSBI.multiply(inputReserve.raw, _1000), inputAmountWithFee)
-    const offChainPrice = numerator.div(denominator);
-
+    const offChainPrice = calculateOutAmount({ inReserve, outReserve, inAmount });
     console.log(`Off-chain price: ${offChainPrice.toString()}`);
 
     const onChainPrice = await uniRouter.getAmountOut(
       '1000000',
-      inputReserve,
-      outputReserve
+      inReserve,
+      outReserve
     );
     console.log(`On-chain price: ${onChainPrice.toString()}`);
 
