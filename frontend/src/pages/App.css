@@ -72,6 +72,10 @@
   padding-left: 0;
 }
 
+.price-panel li {
+  padding-bottom: 8px;
+}
+
 .no-padding {
   padding: 0;
 }

@@ -36,6 +36,8 @@ export interface IPriceRef {
   adapter: string;
   fromAmount: string;
   toAmount: string;
+  fromToken: IToken;
+  toToken: IToken;
 }
 
 export type OptionalTokenPair = [Optional<IToken>, Optional<IToken>];

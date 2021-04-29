@@ -1,9 +1,10 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import BigNumber from 'bignumber.js';
 import _ from 'lodash';
 import Web3 from 'web3';
 import store from '.';
 import { IExchangeAdapter } from '../contracts/types';
-import { IAdapter, IContract, IEthereumAccountPayload, IPriceRef, TokenPair } from '../models';
+import { IPriceRef, TokenPair } from '../models';
 import { wrapWithWeb3 } from '../web3/blockchain-api/base';
 
 
@@ -29,6 +30,8 @@ export const queryAmountOut = createAsyncThunk(
       result.push({
         fromAmount: amountIn,
         toAmount: amountOut,
+        fromToken: tokenPair[0],
+        toToken: tokenPair[1],
         adapter: adapter.name
       });
     }
@@ -38,18 +41,43 @@ export const queryAmountOut = createAsyncThunk(
   }
 );
 
+const calcBestPrice = (priceRefs: Array<IPriceRef>) => {
+  const clonedPriceRefs = _.cloneDeep(priceRefs);
+  clonedPriceRefs.sort((a, b) => {
+    const bnA = new BigNumber(a.toAmount);
+    const bnB = new BigNumber(b.toAmount);
+    if (bnA.isLessThan(bnB)) {
+      return -1;
+    }
+    else if (bnA.isGreaterThan(bnB)) {
+      return 1;
+    }
+    else {
+      return 0;
+    }
+  })
+
+  return _.last(clonedPriceRefs)!;
+}
 
 export const UiSlice = createSlice({
   name: 'ui',
   initialState: {
     fromAmount: '0',
-    toAmount: '0',
+    bestAdapterName: '',
+    bestToAmount: '0',
     priceRef: new Array<IPriceRef>()
   },
   reducers: {},
   extraReducers: builder => {
     builder.addCase(queryAmountOut.fulfilled, (state, { payload }) => {
-      return {...state, priceRef: payload}
+      const bestPriceRef = calcBestPrice(payload);
+      return {
+        ...state,
+        priceRef: payload,
+        bestAdapterName: bestPriceRef.adapter,
+        bestToAmount: bestPriceRef.toAmount,
+      };
     })
   }
 });

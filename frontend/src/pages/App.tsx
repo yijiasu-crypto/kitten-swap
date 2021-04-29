@@ -47,6 +47,8 @@ function App() {
 
   const dispatch = useAppDispatch();
 
+  const uiState = useAppSelector(state => state.ui);
+
   const triggerConnect = () => {
     web3Context
       .activate(injected)
@@ -111,7 +113,7 @@ function App() {
           />
         </Col>
         <Col className="no-padding">
-          <PricePanel />
+          <PricePanel bestAdapter={uiState.bestAdapterName} priceRef={uiState.priceRef}/>
         </Col>
       </Row>
       {renderVerticalPadding(20)}
