@@ -5,12 +5,12 @@
       "chianId": 42,
       "tokens": [
         {
-          "symbol": "DAI",
+          "symbol": "_DAI",
           "address": "0x4f96fe3b7a6cf9725f59d353f723c1bdb64ca6aa",
           "decimals": 18
         },
         {
-          "symbol": "WETH",
+          "symbol": "_WETH",
           "address": "0xd0a1e359811322d97991e03f863a0c30c2cf029c",
           "decimals": 18
         }

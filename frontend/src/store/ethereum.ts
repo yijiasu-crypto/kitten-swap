@@ -1,10 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { IEthereumAccountPayload } from '../models';
 
-interface IEthereumAccountPayload {
-  active: boolean;
-  account: string;
-  chainId: number;
-}
 
 const chainIdToNetworkMapping: { [chainId: string]: string } = {
   '1': 'Mainnet',

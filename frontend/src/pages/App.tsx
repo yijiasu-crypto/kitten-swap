@@ -13,6 +13,7 @@ import Header from '../components/Header';
 import { useAppDispatch, useAppSelector } from '../store';
 import { ethereumSlice } from '../store/ethereum';
 import './App.css';
+import { IToken, TokenPair } from '../models';
 
 const renderVerticalPadding = (height: number) => (
   <Row style={{height}}></Row>
@@ -60,6 +61,7 @@ function App() {
 
   const [metaMaskConnected, setMetaMaskConnected] = useState<Boolean>(false);
   const ethereumState = useAppSelector(state => state.ethereum);
+  const tokens = useAppSelector(state => state.chainData.tokens);
   const dispatch = useAppDispatch();
   useEffect(() => {
 
@@ -83,6 +85,14 @@ function App() {
       });
   };
 
+  const selectTokenPairListener = (pair: any) => {
+    console.log(`Select with: `, pair);
+  }
+
+  const performSwapListener = (pair: TokenPair) => {
+    console.log(`Perform with: `, pair);
+  }
+  
   return (
     <Container>
       <Row className="large-vertical-padding" />
@@ -94,7 +104,7 @@ function App() {
       {renderVerticalPadding(10)}
       <Row>
         <Col className="no-padding" xs={8}>
-          <SwapPanel />
+          <SwapPanel tokens={tokens} onSelectTokenPair={selectTokenPairListener} onPerformSwap={performSwapListener} />
         </Col>
         <Col className="no-padding">
           <PricePanel />

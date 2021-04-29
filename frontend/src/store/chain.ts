@@ -1,15 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-
-interface IToken {
-  symbol: string;
-  address: string;
-  decimals: number;
-}
-
-interface IContract {
-  name: string;
-  address: string;
-}
+import { IContract, IToken } from '../models';
 
 export const chainDataSlice = createSlice({
   name: 'chainData',
