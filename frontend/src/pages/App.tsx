@@ -5,20 +5,22 @@ import {
   Row,
   Table,
 } from 'react-bootstrap';
-import { useWeb3React } from '@web3-react/core';
-import { injected } from '../web3/hooks';
+
 import SwapPanel from '../components/SwapPanel';
 import PricePanel from '../components/PricePanel';
 import Header from '../components/Header';
+import TransactionList from '../components/TransactionList';
+
+import { useWeb3React } from '@web3-react/core';
+import { injected } from '../web3/hooks';
 import { useAppDispatch, useAppSelector } from '../store';
 import { ethereumSlice } from '../store/ethereum';
 import './App.css';
-import { IToken, TokenPair } from '../models';
-import { wrapWithWeb3 } from '../web3/blockchain-api/base';
+import { IToken, OptionalTokenPair, TokenPair } from '../models';
 import Web3 from 'web3';
 import _ from 'lodash';
-import { KittenSwapRouter } from '../contracts/types/KittenSwapRouter';
 import { queryAmountOut } from '../store/ui';
+import { toStringNumber } from '../utils/math';
 
 const renderVerticalPadding = (height: number) => (
   <Row style={{height}}></Row>
@@ -26,69 +28,24 @@ const renderVerticalPadding = (height: number) => (
 
 
 
-const TransactionList = () => {
-  return (
-    <Table striped bordered hover>
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>First Name</th>
-          <th>Last Name</th>
-          <th>Username</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>1</td>
-          <td>Mark</td>
-          <td>Otto</td>
-          <td>@mdo</td>
-        </tr>
-        <tr>
-          <td>2</td>
-          <td>Jacob</td>
-          <td>Thornton</td>
-          <td>@fat</td>
-        </tr>
-      </tbody>
-    </Table>
-  );
-};
 
 function App() {
   // const web3 = useWeb3React<Web3>();
   // console.log(web3);
 
+  const [tokenPair, setTokenPair] = useState<OptionalTokenPair>([undefined, undefined]);
+  const [inAmount, setInAmount] = useState<string>('0');
   const web3Context = useWeb3React<Web3>();
   // const startConnect = async () => {
   //   
   // }
 
-  const [metaMaskConnected, setMetaMaskConnected] = useState<Boolean>(false);
   const ethereumState = useAppSelector(state => state.ethereum);
   const chainDataState = useAppSelector(state => state.chainData);
 
   const tokens = useAppSelector(state => state.chainData.tokens);
 
   const dispatch = useAppDispatch();
-  useEffect(() => {
-
-    console.log(ethereumState);  
-  });
-
-  useEffect(() => {
-    if (ethereumState.active) {
-      console.log("Web3 is OK");
-      // (window as any).web3 = web3Context.library!;
-      const ksrContract = _.find(chainDataState.contracts, { name: "KittenSwapRouter" })!;
-      // (window as any).contract = ksrContract;      
-      const ksrRouter = wrapWithWeb3<KittenSwapRouter>(web3Context.library!, ksrContract);
-      ksrRouter.methods.getAdapterCount().call().then(e => console.log(`adatery c= ${e}`));
-      ksrRouter.methods.getAdapterNameByIndex(0).call().then(e => console.log(`adatery c= ${e}`));
-
-    }
-
-  }, [ethereumState.active]);
 
   const triggerConnect = () => {
     web3Context
@@ -100,26 +57,39 @@ function App() {
           chainId: web3Context.chainId!,
           active: true
         }));
-        setMetaMaskConnected(true);
       })
       .catch((e) => {
         console.log(e);
       });
   };
 
-  const selectTokenPairListener = (pair: any) => {
+  const selectTokenPairListener = (pair: OptionalTokenPair) => {
+    setTokenPair(pair);
     console.log(`Select with: `, pair);
   }
 
   const performSwapListener = (pair: TokenPair) => {
     console.log(`Perform with: `, pair);
-    dispatch(
-      queryAmountOut({
-        web3: web3Context.library!,
-        tokenPair: pair,
-        amountIn: '1000000',
-      })
-    ); 
+  }
+
+  const performUpdateToAmount = (amount: string) => {
+    console.log(tokenPair);
+    console.log(`performUpdateToAmount = ${amount}`);
+    const stringNum = toStringNumber(amount, tokenPair[0]!.decimals);
+    console.log(`stringNum = ${stringNum}`);
+    
+    if (tokenPair[0] !== undefined && tokenPair[1] !== undefined) {
+      if (stringNum !== '0') {
+        dispatch(
+          queryAmountOut({
+            web3: web3Context.library!,
+            tokenPair: tokenPair as TokenPair,
+            amountIn: stringNum,
+          })
+        );     
+      }
+    }
+
   }
   
   return (
@@ -133,7 +103,12 @@ function App() {
       {renderVerticalPadding(10)}
       <Row>
         <Col className="no-padding" xs={8}>
-          <SwapPanel tokens={tokens} onSelectTokenPair={selectTokenPairListener} onPerformSwap={performSwapListener} />
+          <SwapPanel
+            tokens={tokens}
+            onSelectTokenPair={selectTokenPairListener}
+            onPerformSwap={performSwapListener}
+            onUpdateInAmount={performUpdateToAmount}
+          />
         </Col>
         <Col className="no-padding">
           <PricePanel />
@@ -152,5 +127,25 @@ function App() {
     </Container>
   );
 }
+
+  // useEffect(() => {
+
+  //   console.log(ethereumState);  
+  // });
+
+  // useEffect(() => {
+  //   if (ethereumState.active) {
+  //     console.log("Web3 is OK");
+  //     // (window as any).web3 = web3Context.library!;
+  //     const ksrContract = _.find(chainDataState.contracts, { name: "KittenSwapRouter" })!;
+  //     // (window as any).contract = ksrContract;      
+  //     const ksrRouter = wrapWithWeb3<KittenSwapRouter>(web3Context.library!, ksrContract);
+  //     ksrRouter.methods.getAdapterCount().call().then(e => console.log(`adatery c= ${e}`));
+  //     ksrRouter.methods.getAdapterNameByIndex(0).call().then(e => console.log(`adatery c= ${e}`));
+
+  //   }
+
+  // }, [ethereumState.active]);
+
 
 export default App;

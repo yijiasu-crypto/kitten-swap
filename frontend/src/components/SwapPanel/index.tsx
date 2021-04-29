@@ -16,13 +16,17 @@ import './style.css';
 
 
 type SwanPanelProps = React.PropsWithChildren<{
-  tokens: Array<IToken>,
-  onSelectTokenPair: SingleCallback<OptionalTokenPair>,
-  onPerformSwap: SingleCallback<TokenPair>,
+  tokens: Array<IToken>;
+  onSelectTokenPair: SingleCallback<OptionalTokenPair>;
+  onPerformSwap: SingleCallback<TokenPair>;
+  onUpdateInAmount: SingleCallback<string>;
 }>;
 
 type SwanInputProps = React.PropsWithChildren<{
-  direction: Direction, tokens: Array<IToken>, onSelectToken: SingleCallback<IToken>
+  direction: Direction;
+  tokens: Array<IToken>;
+  onSelectToken: SingleCallback<IToken>;
+  onUpdateInAmount?: SingleCallback<string>
 }>;
 
 type Direction = 'from' | 'to';
@@ -58,9 +62,10 @@ const SwapButton: React.FC<{ buttonStatus: SwapButtonStatus, onPerformSwap?: Gen
   </InputGroup>
 );
 
-const SwapInput: React.FC<SwanInputProps> = ({ direction, tokens, onSelectToken }) => {
+const SwapInput: React.FC<SwanInputProps> = ({ direction, tokens, onSelectToken, onUpdateInAmount }) => {
   
   const [selectedToken, setSelectedToken] = useState<Optional<IToken>>();
+  const inputRef = React.createRef<HTMLInputElement>();
 
   const selectTokenListener = (eventKey: string | null) => {
     if (eventKey) {
@@ -73,12 +78,25 @@ const SwapInput: React.FC<SwanInputProps> = ({ direction, tokens, onSelectToken 
     }
   }
 
+  const checkNumerical = (event: any) => {
+    if (!/[0-9]|\./.test(event.key)) {
+      event.preventDefault();
+    }
+  }
+
+  const throttledCallback = _.throttle(() => { onUpdateInAmount!(inputRef.current!.value) }, 800, { trailing: true });
+  const textChange = () => {
+    if (direction === 'from') {
+      throttledCallback();
+    }
+  }
+
   return (
     <>
       <label className="sm-label" htmlFor={`swap-input-${direction}`}>
         {direction.toUpperCase()}
       </label>
-      <InputGroup size="lg">
+      <InputGroup size="lg" onChange={textChange} onKeyPress={checkNumerical}>
         <DropdownButton
           as={InputGroup.Prepend}
           variant="outline-secondary"
@@ -90,14 +108,14 @@ const SwapInput: React.FC<SwanInputProps> = ({ direction, tokens, onSelectToken 
             <Dropdown.Item eventKey={[direction, t.symbol].join("!")}>{t.symbol}</Dropdown.Item>
           ))}
         </DropdownButton>
-        <FormControl id={`swap-input-${direction}`} />
+        <FormControl ref={inputRef} id={`swap-input-${direction}`} />
       </InputGroup>
     </>
   );
 };
 
 
-const SwapPanel: React.FC<SwanPanelProps> = ({ tokens, onSelectTokenPair, onPerformSwap }) => {
+const SwapPanel: React.FC<SwanPanelProps> = ({ tokens, onSelectTokenPair, onPerformSwap, onUpdateInAmount }) => {
   const [fromToken, setFromToken] = useState<Optional<IToken>>();
   const [toToken, setToToken] = useState<Optional<IToken>>();
   const [swapButtonStatus, setSwapButtonStatus] = useState(SwapButtonStatus.NOT_SELECTED);
@@ -129,13 +147,25 @@ const SwapPanel: React.FC<SwanPanelProps> = ({ tokens, onSelectTokenPair, onPerf
   return (
     <ListGroup>
       <ListGroup.Item className="card">
-        <SwapInput direction="from" tokens={tokens} onSelectToken={makeTokenSelector('from')} />
+        <SwapInput
+          direction="from"
+          tokens={tokens}
+          onSelectToken={makeTokenSelector('from')}
+          onUpdateInAmount={onUpdateInAmount}
+        />
       </ListGroup.Item>
       <ListGroup.Item className="card">
-        <SwapInput direction="to" tokens={tokens} onSelectToken={makeTokenSelector('to')} />
+        <SwapInput
+          direction="to"
+          tokens={tokens}
+          onSelectToken={makeTokenSelector('to')}
+        />
       </ListGroup.Item>
       <ListGroup.Item className="card-button">
-        <SwapButton buttonStatus={swapButtonStatus} onPerformSwap={() => onPerformSwap([fromToken!, toToken!])} />
+        <SwapButton
+          buttonStatus={swapButtonStatus}
+          onPerformSwap={() => onPerformSwap([fromToken!, toToken!])}
+        />
       </ListGroup.Item>
     </ListGroup>
   );
