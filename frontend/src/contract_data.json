@@ -18,7 +18,18 @@
       "contracts": [
         {
           "name": "KittenSwapRouter",
+          "interface": "KittenSwapRouter",
           "address": "0xea7abD0f0bA8EfF1f75242A083A7F4a881FAAAE4"
+        },
+        {
+          "name": "SushiSwap_Adapter",
+          "interface": "IExchangeAdapter",
+          "address": "0x05b97B1a9e492Fd7b2eC5858feE6939430cB510B"
+        },
+        {
+          "name": "UniSwap_Adapter",
+          "interface": "IExchangeAdapter",
+          "address": "0x1B93Db37A2D956Ce0AD0156E40cCB30Cd7056625"
         }
       ]
     }

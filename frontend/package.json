@@ -30,7 +30,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "gen-sc-types": "typechain --outDir ./src/types --target=web3-v1 --glob \"../chain/build/contracts/*.json\""
   },
   "eslintConfig": {
     "extends": [
@@ -51,6 +52,8 @@
     ]
   },
   "devDependencies": {
-    "@types/lodash": "^4.14.168"
+    "@typechain/web3-v1": "^2.2.0",
+    "@types/lodash": "^4.14.168",
+    "typechain": "^4.0.3"
   }
 }

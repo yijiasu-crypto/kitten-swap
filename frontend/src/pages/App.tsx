@@ -14,6 +14,11 @@ import { useAppDispatch, useAppSelector } from '../store';
 import { ethereumSlice } from '../store/ethereum';
 import './App.css';
 import { IToken, TokenPair } from '../models';
+import { wrapWithWeb3 } from '../web3/blockchain-api/base';
+import Web3 from 'web3';
+import _ from 'lodash';
+import { KittenSwapRouter } from '../contracts/types/KittenSwapRouter';
+import { queryAmountOut } from '../store/ui';
 
 const renderVerticalPadding = (height: number) => (
   <Row style={{height}}></Row>
@@ -54,19 +59,36 @@ function App() {
   // const web3 = useWeb3React<Web3>();
   // console.log(web3);
 
-  const web3Context = useWeb3React();
+  const web3Context = useWeb3React<Web3>();
   // const startConnect = async () => {
   //   
   // }
 
   const [metaMaskConnected, setMetaMaskConnected] = useState<Boolean>(false);
   const ethereumState = useAppSelector(state => state.ethereum);
+  const chainDataState = useAppSelector(state => state.chainData);
+
   const tokens = useAppSelector(state => state.chainData.tokens);
+
   const dispatch = useAppDispatch();
   useEffect(() => {
 
     console.log(ethereumState);  
   });
+
+  useEffect(() => {
+    if (ethereumState.active) {
+      console.log("Web3 is OK");
+      // (window as any).web3 = web3Context.library!;
+      const ksrContract = _.find(chainDataState.contracts, { name: "KittenSwapRouter" })!;
+      // (window as any).contract = ksrContract;      
+      const ksrRouter = wrapWithWeb3<KittenSwapRouter>(web3Context.library!, ksrContract);
+      ksrRouter.methods.getAdapterCount().call().then(e => console.log(`adatery c= ${e}`));
+      ksrRouter.methods.getAdapterNameByIndex(0).call().then(e => console.log(`adatery c= ${e}`));
+
+    }
+
+  }, [ethereumState.active]);
 
   const triggerConnect = () => {
     web3Context
@@ -91,6 +113,13 @@ function App() {
 
   const performSwapListener = (pair: TokenPair) => {
     console.log(`Perform with: `, pair);
+    dispatch(
+      queryAmountOut({
+        web3: web3Context.library!,
+        tokenPair: pair,
+        amountIn: '1000000',
+      })
+    ); 
   }
   
   return (

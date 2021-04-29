@@ -2,11 +2,13 @@ import { configureStore } from '@reduxjs/toolkit';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import { chainDataSlice } from './chain';
 import { ethereumSlice } from './ethereum';
+import { UiSlice } from './ui';
 
 const store = configureStore({
   reducer: {
     chainData: chainDataSlice.reducer,
     ethereum: ethereumSlice.reducer,
+    ui: UiSlice.reducer,
   },
 });
 
