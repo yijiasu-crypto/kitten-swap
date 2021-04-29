@@ -1,12 +1,14 @@
 import { useWeb3React } from '@web3-react/core'
 import { useEffect, useState } from 'react'
 import Web3 from 'web3'
+import store from '../store'
+import { ethereumSlice } from '../store/ethereum'
 import { useEagerConnect, useInactiveListener } from './hooks'
 
 export default function Web3Context({ children }: { children: JSX.Element }) {
 
   const context = useWeb3React<Web3>()
-  const { connector, library, chainId, account, activate, deactivate, active, error } = context
+  const { connector } = context
 
   // handle logic to recognize the connector currently being activated
   const [activatingConnector, setActivatingConnector] = useState<any>()
@@ -34,6 +36,14 @@ export default function Web3Context({ children }: { children: JSX.Element }) {
     }
   }, [])
 
+  useEffect(() => {
+    if (triedEager && context.active) {
+      store.dispatch(ethereumSlice.actions.activate({
+        account: context.account!,
+        chainId: context.chainId!,
+        active: true
+      }));
+  }});
   // on page load, do nothing until we've tried to connect to the injected connector
   if (!triedEager) {
     return null

@@ -45,22 +45,6 @@
   background-color: hsla(0,0%,4%,.4);
 }
 
-.card {
-  height: 100px;
-  padding-top: 5px;
-}
-
-.sm-label {
-  font-size: 0.9em;
-  font-weight: bold;
-
-}
-
-.card-button{
-  height: 100px;
-  padding-top: 25px;
-}
-
 .header-col {
   display: flex;
   align-items: center;

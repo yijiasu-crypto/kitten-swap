@@ -10,14 +10,19 @@ import { Web3ReactProvider } from '@web3-react/core';
 import { getWeb3Library } from './web3';
 import Web3Context from './web3/context';
 
+import './utils/load-chain-data';
+import { Provider } from 'react-redux';
+import store from './store';
 
 ReactDOM.render(
   <React.StrictMode>
-    <Web3ReactProvider getLibrary={getWeb3Library}>
-      <Web3Context>
-        <App />
-      </Web3Context>
-    </Web3ReactProvider>
+    <Provider store={store}>
+      <Web3ReactProvider getLibrary={getWeb3Library}>
+        <Web3Context>
+          <App />
+        </Web3Context>
+      </Web3ReactProvider>
+    </Provider>
   </React.StrictMode>,
   document.getElementById('root')
 );
