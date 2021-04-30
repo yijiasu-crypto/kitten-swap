@@ -7,9 +7,9 @@ import { fromStringNumber } from '../../utils/math';
 import './style.css';
 
 const PricePanel: React.FC<{
-  bestAdapter: string;
+  bestPriceRef: IPriceRef;
   priceRef: Array<IPriceRef>;
-}> = ({ bestAdapter, priceRef }) => (
+}> = ({ bestPriceRef, priceRef }) => (
   <ListGroup>
     <ListGroup.Item className="price-panel">
       <h6 className="sm-label">PRICE COMPARE</h6>
@@ -24,7 +24,7 @@ const PricePanel: React.FC<{
             pr.toToken.decimals,
             5
           );
-          const isBest = pr.adapter === bestAdapter;
+          const isBest = pr.adapter === bestPriceRef.adapter;
           return (
             <li style={isBest ? { color: 'green', fontWeight: 'bold' } : {}}>
               {isBest ? '✅ ' : ''}

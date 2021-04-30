@@ -8,11 +8,12 @@ import {
   InputGroup,
   ListGroup,
 } from 'react-bootstrap';
-import { IToken, OptionalTokenPair, TokenPair } from '../../models';
+import { IPriceRef, IToken, OptionalTokenPair, TokenPair } from '../../models';
 import { GenericCallback, Optional, SingleCallback } from '../../utils/optional-type';
 import _ from 'lodash';
 
 import './style.css';
+import { fromStringNumber } from '../../utils/math';
 
 
 type SwanPanelProps = React.PropsWithChildren<{
@@ -20,6 +21,7 @@ type SwanPanelProps = React.PropsWithChildren<{
   onSelectTokenPair: SingleCallback<OptionalTokenPair>;
   onPerformSwap: SingleCallback<TokenPair>;
   onUpdateInAmount: SingleCallback<string>;
+  bestPriceRef?: IPriceRef;
 }>;
 
 type SwanInputProps = React.PropsWithChildren<{
@@ -27,6 +29,7 @@ type SwanInputProps = React.PropsWithChildren<{
   tokens: Array<IToken>;
   onSelectToken: SingleCallback<IToken>;
   onUpdateInAmount?: SingleCallback<string>
+  bestPriceRef?: IPriceRef;
 }>;
 
 type Direction = 'from' | 'to';
@@ -62,7 +65,7 @@ const SwapButton: React.FC<{ buttonStatus: SwapButtonStatus, onPerformSwap?: Gen
   </InputGroup>
 );
 
-const SwapInput: React.FC<SwanInputProps> = ({ direction, tokens, onSelectToken, onUpdateInAmount }) => {
+const SwapInput: React.FC<SwanInputProps> = ({ direction, tokens, onSelectToken, onUpdateInAmount, bestPriceRef }) => {
   
   const [selectedToken, setSelectedToken] = useState<Optional<IToken>>();
   const inputRef = React.createRef<HTMLInputElement>();
@@ -91,10 +94,18 @@ const SwapInput: React.FC<SwanInputProps> = ({ direction, tokens, onSelectToken,
     }
   }
 
+  let inputBoxLabel = direction;
+  let displayToAmount;
+
+  if (bestPriceRef) {
+    inputBoxLabel += `  (VIA ${bestPriceRef.adapter})`;
+    displayToAmount = fromStringNumber(bestPriceRef.toAmount, bestPriceRef.toToken.decimals);
+  }
+
   return (
     <>
       <label className="sm-label" htmlFor={`swap-input-${direction}`}>
-        {direction.toUpperCase()}
+        {inputBoxLabel.toUpperCase()}
       </label>
       <InputGroup size="lg" onChange={textChange} onKeyPress={checkNumerical}>
         <DropdownButton
@@ -105,17 +116,25 @@ const SwapInput: React.FC<SwanInputProps> = ({ direction, tokens, onSelectToken,
           onSelect={selectTokenListener}
         >
           {tokens.map((t) => (
-            <Dropdown.Item eventKey={[direction, t.symbol].join("!")}>{t.symbol}</Dropdown.Item>
+            <Dropdown.Item eventKey={[direction, t.symbol].join('!')}>
+              {t.symbol}
+            </Dropdown.Item>
           ))}
         </DropdownButton>
-        <FormControl ref={inputRef} id={`swap-input-${direction}`} />
+        <FormControl
+          disabled={direction === 'to'}
+          value={displayToAmount}
+          ref={inputRef}
+          id={`swap-input-${direction}`}
+        />
       </InputGroup>
     </>
   );
 };
 
 
-const SwapPanel: React.FC<SwanPanelProps> = ({ tokens, onSelectTokenPair, onPerformSwap, onUpdateInAmount }) => {
+const SwapPanel: React.FC<SwanPanelProps> = ({ tokens, onSelectTokenPair, onPerformSwap, onUpdateInAmount, bestPriceRef }) => {
+
   const [fromToken, setFromToken] = useState<Optional<IToken>>();
   const [toToken, setToToken] = useState<Optional<IToken>>();
   const [swapButtonStatus, setSwapButtonStatus] = useState(SwapButtonStatus.NOT_SELECTED);
@@ -159,6 +178,7 @@ const SwapPanel: React.FC<SwanPanelProps> = ({ tokens, onSelectTokenPair, onPerf
           direction="to"
           tokens={tokens}
           onSelectToken={makeTokenSelector('to')}
+          bestPriceRef={bestPriceRef}
         />
       </ListGroup.Item>
       <ListGroup.Item className="card-button">

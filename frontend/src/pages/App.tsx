@@ -110,10 +110,11 @@ function App() {
             onSelectTokenPair={selectTokenPairListener}
             onPerformSwap={performSwapListener}
             onUpdateInAmount={performUpdateToAmount}
+            bestPriceRef={uiState.price.bestPriceRef}
           />
         </Col>
         <Col className="no-padding">
-          <PricePanel bestAdapter={uiState.bestAdapterName} priceRef={uiState.priceRef}/>
+          <PricePanel bestPriceRef={uiState.price.bestPriceRef!} priceRef={uiState.price.priceRefs}/>
         </Col>
       </Row>
       {renderVerticalPadding(20)}
