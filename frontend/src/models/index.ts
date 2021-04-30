@@ -45,5 +45,13 @@ export interface IPriceRef {
   toToken: IToken;
 }
 
+export interface IRecentTx {
+  status: 'pending' | 'rejected' | 'success';
+  timestamp: number;
+  description: string;
+  network: string;
+  txHash: string;
+}
+
 export type OptionalTokenPair = [Optional<IToken>, Optional<IToken>];
 export type TokenPair = [IToken, IToken];

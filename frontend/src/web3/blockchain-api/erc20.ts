@@ -4,6 +4,7 @@ import { IERC20, IExchangeAdapter } from '../../contracts/types';
 import { KittenSwapRouter } from '../../contracts/types/KittenSwapRouter';
 import { TokenPair } from '../../models';
 import store from '../../store';
+import { getUnixTimestamp } from '../../utils/datetime';
 import { wrapWithWeb3Interface } from './base';
 
 export const checkERC20Approval = async (
@@ -76,7 +77,7 @@ export const performSwapOnRouter = async (
     contractInterface
   );
 
-  const deadline = Math.round(+new Date()/1000) + 10000;
+  const deadline = getUnixTimestamp() + 10000;
 
   return ksrContract.methods.swapExactTokensForTokens(
     amountIn,

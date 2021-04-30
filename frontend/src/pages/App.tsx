@@ -140,7 +140,7 @@ function App() {
         </Col>
       </Row>
       <Row>
-        <TransactionList />
+        <TransactionList recentTx={uiState.recentTx} />
       </Row>
     </Container>
   );

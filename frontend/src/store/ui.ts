@@ -1,20 +1,25 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import BigNumber from 'bignumber.js';
 import _ from 'lodash';
 import { toast } from 'react-toastify';
 import Web3 from 'web3';
 import store from '.';
-import { IExchangeAdapter } from '../contracts/types';
-import { IPriceRef, TokenPair } from '../models';
-import { wrapWithWeb3 } from '../web3/blockchain-api/base';
-import { checkERC20Approval, grantERC20Approval, performSwapOnRouter, queryAdapterAmountOut } from '../web3/blockchain-api/erc20';
+import { IPriceRef, IRecentTx, TokenPair } from '../models';
+import { getUnixTimestamp } from '../utils/datetime';
+import {
+  checkERC20Approval,
+  grantERC20Approval,
+  performSwapOnRouter,
+  queryAdapterAmountOut,
+} from '../web3/blockchain-api/erc20';
 
 interface IUiState {
-  busy: boolean,
+  busy: boolean;
   price: {
     bestPriceRef?: IPriceRef;
     priceRefs: Array<IPriceRef>;
   };
+  recentTx: Array<IRecentTx>;
 }
 
 export const queryAmountOut = createAsyncThunk(
@@ -26,12 +31,11 @@ export const queryAmountOut = createAsyncThunk(
 
     const result: Array<IPriceRef> = [];
     for (const adapter of adapters) {
-
       const amountOut = await queryAdapterAmountOut(web3, adapter.address, {
         tokenPair,
         amountIn,
       });
-      
+
       result.push({
         fromAmount: amountIn,
         toAmount: amountOut,
@@ -47,7 +51,12 @@ export const queryAmountOut = createAsyncThunk(
 
 export const performSwap = createAsyncThunk(
   'ui/performSwap',
-  async (payload: { web3: Web3; tokenPair: TokenPair; amountIn: string, amountOutMin: string }) => {
+  async (payload: {
+    web3: Web3;
+    tokenPair: TokenPair;
+    amountIn: string;
+    amountOutMin: string;
+  }) => {
     const { web3, tokenPair, amountIn, amountOutMin } = payload;
     const { contracts } = store.getState().chainData;
     const ksrContract = _.find(contracts, { name: 'KittenSwapRouter' })!;
@@ -59,10 +68,14 @@ export const performSwap = createAsyncThunk(
 
     if (!isApproved) {
       // need ERC20 Approval
-      const approveTxReceipt = await grantERC20Approval(web3, tokenPair[0].address, {
-        owner: ownerAddress,
-        spender: ksrContract.address,
-      });
+      const approveTxReceipt = await grantERC20Approval(
+        web3,
+        tokenPair[0].address,
+        {
+          owner: ownerAddress,
+          spender: ksrContract.address,
+        }
+      );
       console.log(approveTxReceipt);
     }
 
@@ -71,12 +84,22 @@ export const performSwap = createAsyncThunk(
       amountIn,
       amountOutMin,
       tokenPair,
-      beneficiaryAddress: ownerAddress
+      beneficiaryAddress: ownerAddress,
     });
 
+    const state = store.getState();
+    store.dispatch(
+      uiSlice.actions.enqueueTx({
+        txHash: swapTxReceipt.transactionHash,
+        network: state.ethereum.networkName,
+        description: `Swapping`,
+      })
+    );
     console.log(swapTxReceipt);
+
+    return swapTxReceipt;
   }
-)
+);
 
 const calcBestPrice = (priceRefs: Array<IPriceRef>) => {
   const clonedPriceRefs = _.cloneDeep(priceRefs);
@@ -95,6 +118,12 @@ const calcBestPrice = (priceRefs: Array<IPriceRef>) => {
   return _.last(clonedPriceRefs)!;
 };
 
+interface IEnqueueTxPayload {
+  network: string;
+  txHash: string;
+  description: string;
+}
+
 export const uiSlice = createSlice({
   name: 'ui',
   initialState: {
@@ -102,29 +131,60 @@ export const uiSlice = createSlice({
       bestPriceRef: undefined,
       priceRefs: new Array<IPriceRef>(),
     },
+    recentTx: new Array<IRecentTx>(),
   } as IUiState,
   reducers: {
-    becomeBusy: state => {
+    becomeBusy: (state) => {
       state.busy = true;
     },
-    releaseBusy: state => {
+    releaseBusy: (state) => {
       state.busy = false;
+    },
+    enqueueTx: (state, action: PayloadAction<IEnqueueTxPayload>) => {
+        const { description, txHash, network } = action.payload;
+        const tx: IRecentTx = {
+          status: 'pending',
+          timestamp: getUnixTimestamp(),
+          description,
+          txHash,
+          network,
+        };
+
+        state.recentTx.push(tx);
+    },
+    successTx: (state, action: PayloadAction<{ txHash: string }>) => {
+      const { txHash } = action.payload;
+      const tx = _.find(state.recentTx, { txHash });
+      if (tx) {
+        tx.status = 'success';
+      }
+    },
+    rejectTx: (state, action: PayloadAction<{ txHash: string }>) => {
+      const { txHash } = action.payload;
+      const tx = _.find(state.recentTx, { txHash });
+      if (tx) {
+        tx.status = 'rejected';
+      }
     }
   },
   extraReducers: (builder) => {
-    builder.addCase(queryAmountOut.fulfilled, (state, { payload }) => {
-      const bestPriceRef = calcBestPrice(payload);
-      return {
-        ...state,
-        price: {
-          bestPriceRef,
-          priceRefs: payload,
-        },
-      };
-    })
-    .addCase(performSwap.fulfilled, state => {
-      toast.success('Transaction Success!');
-      return state;
-    })
-  }, 
+    builder
+      .addCase(queryAmountOut.fulfilled, (state, { payload: priceRefs }) => {
+        const bestPriceRef = calcBestPrice(priceRefs);
+        return {
+          ...state,
+          price: {
+            bestPriceRef,
+            priceRefs,
+          },
+        };
+      })
+      .addCase(performSwap.fulfilled, (state, { payload: txReceipt }) => {
+        toast.success('Transaction Success!');
+        setImmediate(() => {
+          store.dispatch(uiSlice.actions.successTx({ txHash: txReceipt.transactionHash }));
+        })
+        return state;
+      });
+  },
 });
