@@ -58,8 +58,9 @@ export const performSwap = createAsyncThunk(
     amountIn: string;
     amountOut: string;
     amountOutMin: string;
+    adapterName: string;
   }) => {
-    const { web3, tokenPair, amountIn, amountOut, amountOutMin } = payload;
+    const { web3, tokenPair, amountIn, amountOut, amountOutMin, adapterName } = payload;
     const { contracts } = store.getState().chainData;
     const ksrContract = _.find(contracts, { name: 'KittenSwapRouter' })!;
     const ownerAddress = store.getState().ethereum.account;
@@ -98,7 +99,7 @@ export const performSwap = createAsyncThunk(
       uiSlice.actions.enqueueTx({
         txHash: swapTxReceipt.transactionHash,
         network: state.ethereum.networkName,
-        description: `Swap ${dispFromAmountAndToken} to ${dispToAmountAndToken}`,
+        description: `Swap ${dispFromAmountAndToken} to ${dispToAmountAndToken} via ${adapterName}`,
       })
     );
     console.log(swapTxReceipt);

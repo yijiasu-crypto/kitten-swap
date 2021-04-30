@@ -87,6 +87,7 @@ function App() {
       amountIn: stringNum,
       amountOut,
       amountOutMin,
+      adapterName: uiState.price.bestPriceRef!.adapter,
     }));
   }
 
