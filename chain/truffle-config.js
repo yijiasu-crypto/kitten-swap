@@ -73,7 +73,7 @@ module.exports = {
         new HDWalletProvider({
           mnemonic,
           providerOrUrl:
-            'wss://ropsten.infura.io/ws/v3/1e7aaee7027040c8a535bfbe50a910f5',
+            'https://ropsten.infura.io/v3/1e7aaee7027040c8a535bfbe50a910f5',
           chainId: 3,
         }),
       network_id: 3, // Ropsten's id
@@ -88,7 +88,7 @@ module.exports = {
         new HDWalletProvider({
           mnemonic,
           providerOrUrl:
-            'wss://kovan.infura.io/ws/v3/1e7aaee7027040c8a535bfbe50a910f5',
+            'https://kovan.infura.io/v3/1e7aaee7027040c8a535bfbe50a910f5',
           chainId: 42,
         }),
       network_id: 42, // Ropsten's id
@@ -96,7 +96,7 @@ module.exports = {
       confirmations: 0, // # of confs to wait between deployments. (default: 0)
       timeoutBlocks: 200, // # of blocks before a deployment times out  (minimum/default: 50)
       skipDryRun: true, // Skip dry run before migrations? (default: false for public nets )
-      gasPrice: 1000000000,  // 1 gwei (in wei)
+      gasPrice: 10000000000,  // 1 gwei (in wei)
     },
 
 

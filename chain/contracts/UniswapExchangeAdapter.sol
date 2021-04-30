@@ -57,7 +57,7 @@ contract UniswapExchangeAdapter is IExchangeAdapter {
     function getAmountOutByTokenPair(uint amountIn, address tokenIn, address tokenOut) override public view returns (uint amountOut) {
       address factory = uniswapRouter.factory();
       (uint reserve0, uint reserve1, ) = IUniswapV2Pair(pairFor(factory, tokenIn, tokenOut)).getReserves();
-      (uint reseverIn, uint reserveOut) = tokenIn < tokenOut ? (reserve1, reserve0) : (reserve0, reserve1);
+      (uint reseverIn, uint reserveOut) = tokenIn < tokenOut ? (reserve0, reserve1) : (reserve1, reserve0);
       amountOut = getAmountOut(amountIn, reseverIn, reserveOut);
     }
 

@@ -106,12 +106,12 @@ contract('KittenSwapRouter', async (accounts) => {
       }
     })
   
-    it('Should get quote from KSR', async function() {
+    it('Should get quote (WETH -> DAI) from KSR', async function() {
       const daiToken = getDaiAddress(netId);
       const wethToken = getWETHAddress(netId);
       const result = await ksrInstance.getBestQuote(
-        daiToken,
         wethToken,
+        daiToken,
         1_000_000
       );
   
@@ -175,8 +175,8 @@ contract('KittenSwapRouter', async (accounts) => {
       const daiToken = getDaiAddress(netId);
       const wethToken = getWETHAddress(netId);
       const result = await ksrInstance.getBestQuote(
-        daiToken,
         wethToken,
+        daiToken,
         1_000_000
       );
   
@@ -244,8 +244,8 @@ contract('KittenSwapRouter', async (accounts) => {
       const daiToken = getDaiAddress(netId);
       const wethToken = getWETHAddress(netId);
       const result = await ksrInstance.getBestQuote(
-        wethToken,
         daiToken,
+        wethToken,
         500_000_000
       );
   
