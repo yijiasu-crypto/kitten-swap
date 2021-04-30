@@ -6,6 +6,7 @@ import Web3 from 'web3';
 import store from '.';
 import { IPriceRef, IRecentTx, TokenPair } from '../models';
 import { getUnixTimestamp } from '../utils/datetime';
+import { fromStringNumber } from '../utils/math';
 import {
   checkERC20Approval,
   grantERC20Approval,
@@ -55,9 +56,10 @@ export const performSwap = createAsyncThunk(
     web3: Web3;
     tokenPair: TokenPair;
     amountIn: string;
+    amountOut: string;
     amountOutMin: string;
   }) => {
-    const { web3, tokenPair, amountIn, amountOutMin } = payload;
+    const { web3, tokenPair, amountIn, amountOut, amountOutMin } = payload;
     const { contracts } = store.getState().chainData;
     const ksrContract = _.find(contracts, { name: 'KittenSwapRouter' })!;
     const ownerAddress = store.getState().ethereum.account;
@@ -88,11 +90,15 @@ export const performSwap = createAsyncThunk(
     });
 
     const state = store.getState();
+
+    const dispFromAmountAndToken = `${fromStringNumber(amountIn, tokenPair[0].decimals, 4)} ${tokenPair[0].symbol}`;
+    const dispToAmountAndToken = `${fromStringNumber(amountOut, tokenPair[1].decimals, 4)} ${tokenPair[1].symbol}`;
+    
     store.dispatch(
       uiSlice.actions.enqueueTx({
         txHash: swapTxReceipt.transactionHash,
         network: state.ethereum.networkName,
-        description: `Swapping`,
+        description: `Swap ${dispFromAmountAndToken} to ${dispToAmountAndToken}`,
       })
     );
     console.log(swapTxReceipt);

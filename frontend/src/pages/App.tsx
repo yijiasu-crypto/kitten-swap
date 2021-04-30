@@ -73,8 +73,8 @@ function App() {
   const performSwapListener = (pair: TokenPair, inAmount: string) => {
     console.log(`Perform with: `, pair);
     const stringNum = toStringNumber(inAmount, tokenPair[0]!.decimals);
-    const bestOutAmount = uiState.price.bestPriceRef!.toAmount;
-    const amountOutMin = new BigNumber(bestOutAmount)
+    const amountOut = uiState.price.bestPriceRef!.toAmount;
+    const amountOutMin = new BigNumber(amountOut)
       .multipliedBy(900)
       .dividedBy(1000)
       .toFixed(0)
@@ -85,6 +85,7 @@ function App() {
       web3: web3Context.library!,
       tokenPair: tokenPair as TokenPair,
       amountIn: stringNum,
+      amountOut,
       amountOutMin,
     }));
   }
