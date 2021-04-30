@@ -7,6 +7,7 @@ import {
   FormControl,
   InputGroup,
   ListGroup,
+  Spinner,
 } from 'react-bootstrap';
 import { IPriceRef, IToken, OptionalTokenPair, TokenPair } from '../../models';
 import { DoubleCallback, Optional, SingleCallback } from '../../utils/optional-type';
@@ -14,6 +15,7 @@ import _ from 'lodash';
 
 import './style.css';
 import { fromStringNumber } from '../../utils/math';
+import { useAppSelector } from '../../store';
 
 
 type SwanPanelProps = React.PropsWithChildren<{
@@ -37,15 +39,16 @@ type Direction = 'from' | 'to';
 enum SwapButtonStatus {
   OK = '🚀  Swap Now',
   NOT_SELECTED = 'Please Select...',
-  IDENTICAL_PAIR = 'Two tokens must not be identical'
+  IDENTICAL_PAIR = 'Two tokens must not be identical',
+  BUSY = 'BUSY',
 };
 
 
 
-const SwapButton: React.FC<{ buttonStatus: SwapButtonStatus, onPerformSwap?: SingleCallback<any> }> = ({
-  buttonStatus,
-  onPerformSwap
-}) => (
+const SwapButton: React.FC<{
+  buttonStatus: SwapButtonStatus;
+  onPerformSwap?: SingleCallback<any>;
+}> = ({ buttonStatus, onPerformSwap }) => (
   <InputGroup size="lg">
     <Button
       variant={
@@ -60,7 +63,17 @@ const SwapButton: React.FC<{ buttonStatus: SwapButtonStatus, onPerformSwap?: Sin
       onClick={onPerformSwap}
       block
     >
-      {buttonStatus}
+      {buttonStatus !== SwapButtonStatus.BUSY ? (
+        buttonStatus
+      ) : (
+        <Spinner
+          as="span"
+          animation="border"
+          size="sm"
+          role="status"
+          aria-hidden="true"
+        />
+      )}
     </Button>
   </InputGroup>
 );
@@ -147,7 +160,8 @@ const SwapPanel: React.FC<SwanPanelProps> = ({ tokens, onSelectTokenPair, onPerf
       : onSelectTokenPair([fromToken, token]);
   };
 
-
+  const uiState = useAppSelector(state => state.ui);
+  
   useEffect(() => {
     const testHasSelected = !(fromToken === undefined || toToken === undefined);
     const testIdenticalPair = testHasSelected && fromToken?.symbol === toToken?.symbol;
@@ -158,10 +172,13 @@ const SwapPanel: React.FC<SwanPanelProps> = ({ tokens, onSelectTokenPair, onPerf
     else if (!testHasSelected) {
       setSwapButtonStatus(SwapButtonStatus.NOT_SELECTED);
     }
+    else if (uiState.busy) {
+      setSwapButtonStatus(SwapButtonStatus.BUSY);
+    }
     else {
       setSwapButtonStatus(SwapButtonStatus.OK);
     }
-  }, [fromToken, toToken]);
+  }, [fromToken, toToken, uiState.busy]);
 
   
   return (

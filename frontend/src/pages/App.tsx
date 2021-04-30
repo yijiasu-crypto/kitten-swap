@@ -19,7 +19,7 @@ import './App.css';
 import { IToken, OptionalTokenPair, TokenPair } from '../models';
 import Web3 from 'web3';
 import _ from 'lodash';
-import { performSwap, queryAmountOut } from '../store/ui';
+import { performSwap, queryAmountOut, uiSlice } from '../store/ui';
 import { toStringNumber } from '../utils/math';
 import BigNumber from 'bignumber.js';
 
@@ -79,6 +79,8 @@ function App() {
       .dividedBy(1000)
       .toFixed(0)
       .toString();
+    
+    // dispatch(uiSlice.actions.becomeBusy());
     dispatch(performSwap({
       web3: web3Context.library!,
       tokenPair: tokenPair as TokenPair,

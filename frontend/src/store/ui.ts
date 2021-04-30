@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import BigNumber from 'bignumber.js';
 import _ from 'lodash';
+import { toast } from 'react-toastify';
 import Web3 from 'web3';
 import store from '.';
 import { IExchangeAdapter } from '../contracts/types';
@@ -9,6 +10,7 @@ import { wrapWithWeb3 } from '../web3/blockchain-api/base';
 import { checkERC20Approval, grantERC20Approval, performSwapOnRouter, queryAdapterAmountOut } from '../web3/blockchain-api/erc20';
 
 interface IUiState {
+  busy: boolean,
   price: {
     bestPriceRef?: IPriceRef;
     priceRefs: Array<IPriceRef>;
@@ -93,7 +95,7 @@ const calcBestPrice = (priceRefs: Array<IPriceRef>) => {
   return _.last(clonedPriceRefs)!;
 };
 
-export const UiSlice = createSlice({
+export const uiSlice = createSlice({
   name: 'ui',
   initialState: {
     price: {
@@ -101,7 +103,14 @@ export const UiSlice = createSlice({
       priceRefs: new Array<IPriceRef>(),
     },
   } as IUiState,
-  reducers: {},
+  reducers: {
+    becomeBusy: state => {
+      state.busy = true;
+    },
+    releaseBusy: state => {
+      state.busy = false;
+    }
+  },
   extraReducers: (builder) => {
     builder.addCase(queryAmountOut.fulfilled, (state, { payload }) => {
       const bestPriceRef = calcBestPrice(payload);
@@ -112,6 +121,10 @@ export const UiSlice = createSlice({
           priceRefs: payload,
         },
       };
-    });
-  },
+    })
+    .addCase(performSwap.fulfilled, state => {
+      toast.success('Transaction Success!');
+      return state;
+    })
+  }, 
 });
