@@ -6,6 +6,7 @@ import store from '.';
 import { IExchangeAdapter } from '../contracts/types';
 import { IPriceRef, TokenPair } from '../models';
 import { wrapWithWeb3 } from '../web3/blockchain-api/base';
+import { checkERC20Approval, grantERC20Approval, performSwapOnRouter, queryAdapterAmountOut } from '../web3/blockchain-api/erc20';
 
 interface IUiState {
   price: {
@@ -23,16 +24,12 @@ export const queryAmountOut = createAsyncThunk(
 
     const result: Array<IPriceRef> = [];
     for (const adapter of adapters) {
-      const adapterContract = wrapWithWeb3<IExchangeAdapter>(web3, adapter);
 
-      const amountOut = await adapterContract.methods
-        .getAmountOutByTokenPair(
-          amountIn,
-          tokenPair[1].address,
-          tokenPair[0].address
-        )
-        .call();
-
+      const amountOut = await queryAdapterAmountOut(web3, adapter.address, {
+        tokenPair,
+        amountIn,
+      });
+      
       result.push({
         fromAmount: amountIn,
         toAmount: amountOut,
@@ -45,6 +42,39 @@ export const queryAmountOut = createAsyncThunk(
     return result;
   }
 );
+
+export const performSwap = createAsyncThunk(
+  'ui/performSwap',
+  async (payload: { web3: Web3; tokenPair: TokenPair; amountIn: string, amountOutMin: string }) => {
+    const { web3, tokenPair, amountIn, amountOutMin } = payload;
+    const { contracts } = store.getState().chainData;
+    const ksrContract = _.find(contracts, { name: 'KittenSwapRouter' })!;
+    const ownerAddress = store.getState().ethereum.account;
+    const isApproved = await checkERC20Approval(web3, tokenPair[0].address, {
+      owner: ownerAddress,
+      spender: ksrContract.address,
+    });
+
+    if (!isApproved) {
+      // need ERC20 Approval
+      const approveTxReceipt = await grantERC20Approval(web3, tokenPair[0].address, {
+        owner: ownerAddress,
+        spender: ksrContract.address,
+      });
+      console.log(approveTxReceipt);
+    }
+
+    // perform actual swap
+    const swapTxReceipt = await performSwapOnRouter(web3, ksrContract.address, {
+      amountIn,
+      amountOutMin,
+      tokenPair,
+      beneficiaryAddress: ownerAddress
+    });
+
+    console.log(swapTxReceipt);
+  }
+)
 
 const calcBestPrice = (priceRefs: Array<IPriceRef>) => {
   const clonedPriceRefs = _.cloneDeep(priceRefs);

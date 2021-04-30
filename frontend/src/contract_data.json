@@ -6,11 +6,13 @@
       "tokens": [
         {
           "symbol": "_DAI",
+          "interface": "IERC20",
           "address": "0x4f96fe3b7a6cf9725f59d353f723c1bdb64ca6aa",
           "decimals": 18
         },
         {
           "symbol": "_WETH",
+          "interface": "IERC20",
           "address": "0xd0a1e359811322d97991e03f863a0c30c2cf029c",
           "decimals": 18
         }
@@ -19,17 +21,22 @@
         {
           "name": "KittenSwapRouter",
           "interface": "KittenSwapRouter",
-          "address": "0xea7abD0f0bA8EfF1f75242A083A7F4a881FAAAE4"
+          "address": "0x278A89420e64513E164e3a062D44f766dc85C4fD"
         },
         {
           "name": "SushiSwap_Adapter",
           "interface": "IExchangeAdapter",
-          "address": "0x05b97B1a9e492Fd7b2eC5858feE6939430cB510B"
+          "address": "0x147059fbbf511A150854Db27A5C6bbF7ea90004e"
         },
         {
           "name": "UniSwap_Adapter",
           "interface": "IExchangeAdapter",
-          "address": "0x1B93Db37A2D956Ce0AD0156E40cCB30Cd7056625"
+          "address": "0x42D5f069228A2Ef5344bFC1d400Fa94EFd4348C5"
+        }
+      ],
+      "interfaces": [
+        {
+          "name": "IERC20"
         }
       ]
     }

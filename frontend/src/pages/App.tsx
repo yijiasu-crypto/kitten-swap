@@ -19,8 +19,9 @@ import './App.css';
 import { IToken, OptionalTokenPair, TokenPair } from '../models';
 import Web3 from 'web3';
 import _ from 'lodash';
-import { queryAmountOut } from '../store/ui';
+import { performSwap, queryAmountOut } from '../store/ui';
 import { toStringNumber } from '../utils/math';
+import BigNumber from 'bignumber.js';
 
 const renderVerticalPadding = (height: number) => (
   <Row style={{height}}></Row>
@@ -34,7 +35,6 @@ function App() {
   // console.log(web3);
 
   const [tokenPair, setTokenPair] = useState<OptionalTokenPair>([undefined, undefined]);
-  const [inAmount, setInAmount] = useState<string>('0');
   const web3Context = useWeb3React<Web3>();
   // const startConnect = async () => {
   //   
@@ -70,8 +70,21 @@ function App() {
     console.log(`Select with: `, pair);
   }
 
-  const performSwapListener = (pair: TokenPair) => {
+  const performSwapListener = (pair: TokenPair, inAmount: string) => {
     console.log(`Perform with: `, pair);
+    const stringNum = toStringNumber(inAmount, tokenPair[0]!.decimals);
+    const bestOutAmount = uiState.price.bestPriceRef!.toAmount;
+    const amountOutMin = new BigNumber(bestOutAmount)
+      .multipliedBy(900)
+      .dividedBy(1000)
+      .toFixed(0)
+      .toString();
+    dispatch(performSwap({
+      web3: web3Context.library!,
+      tokenPair: tokenPair as TokenPair,
+      amountIn: stringNum,
+      amountOutMin,
+    }));
   }
 
   const performUpdateToAmount = (amount: string) => {

@@ -9,7 +9,7 @@ import {
   ListGroup,
 } from 'react-bootstrap';
 import { IPriceRef, IToken, OptionalTokenPair, TokenPair } from '../../models';
-import { GenericCallback, Optional, SingleCallback } from '../../utils/optional-type';
+import { DoubleCallback, Optional, SingleCallback } from '../../utils/optional-type';
 import _ from 'lodash';
 
 import './style.css';
@@ -19,7 +19,7 @@ import { fromStringNumber } from '../../utils/math';
 type SwanPanelProps = React.PropsWithChildren<{
   tokens: Array<IToken>;
   onSelectTokenPair: SingleCallback<OptionalTokenPair>;
-  onPerformSwap: SingleCallback<TokenPair>;
+  onPerformSwap: DoubleCallback<TokenPair, string>;
   onUpdateInAmount: SingleCallback<string>;
   bestPriceRef?: IPriceRef;
 }>;
@@ -42,7 +42,7 @@ enum SwapButtonStatus {
 
 
 
-const SwapButton: React.FC<{ buttonStatus: SwapButtonStatus, onPerformSwap?: GenericCallback }> = ({
+const SwapButton: React.FC<{ buttonStatus: SwapButtonStatus, onPerformSwap?: SingleCallback<any> }> = ({
   buttonStatus,
   onPerformSwap
 }) => (
@@ -137,6 +137,7 @@ const SwapPanel: React.FC<SwanPanelProps> = ({ tokens, onSelectTokenPair, onPerf
 
   const [fromToken, setFromToken] = useState<Optional<IToken>>();
   const [toToken, setToToken] = useState<Optional<IToken>>();
+  const [inAmount, setInAmount] = useState('0');
   const [swapButtonStatus, setSwapButtonStatus] = useState(SwapButtonStatus.NOT_SELECTED);
   
   const makeTokenSelector = (direction: Direction) => (token: IToken) => {
@@ -170,7 +171,10 @@ const SwapPanel: React.FC<SwanPanelProps> = ({ tokens, onSelectTokenPair, onPerf
           direction="from"
           tokens={tokens}
           onSelectToken={makeTokenSelector('from')}
-          onUpdateInAmount={onUpdateInAmount}
+          onUpdateInAmount={(amount) => {
+            setInAmount(amount);
+            onUpdateInAmount(amount);
+          }}
         />
       </ListGroup.Item>
       <ListGroup.Item className="card">
@@ -184,7 +188,7 @@ const SwapPanel: React.FC<SwanPanelProps> = ({ tokens, onSelectTokenPair, onPerf
       <ListGroup.Item className="card-button">
         <SwapButton
           buttonStatus={swapButtonStatus}
-          onPerformSwap={() => onPerformSwap([fromToken!, toToken!])}
+          onPerformSwap={() => onPerformSwap([fromToken!, toToken!], inAmount)}
         />
       </ListGroup.Item>
     </ListGroup>

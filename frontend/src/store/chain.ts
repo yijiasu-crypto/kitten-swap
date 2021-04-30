@@ -1,8 +1,19 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { IContract, IToken } from '../models';
+import _ from 'lodash';
+import { IContract, IContractInterface, IToken } from '../models';
 
 export const fetchContractAbi = createAsyncThunk(
   'chainData/fetchContractAbi',
+  async (contractInterface: string) => {
+    const resp = await fetch(`/abi/${contractInterface}.json`).then((resp) =>
+      resp.json()
+    );
+    return { contractInterface: contractInterface, abi: JSON.stringify((resp as any).abi) };
+  }
+);
+
+export const fetchContractInterface = createAsyncThunk(
+  'chainData/fetchContractInterface',
   async (contractInterface: string) => {
     const resp = await fetch(`/abi/${contractInterface}.json`).then((resp) =>
       resp.json()
@@ -16,6 +27,7 @@ export const chainDataSlice = createSlice({
   initialState: {
     tokens: new Array<IToken>(),
     contracts: new Array<IContract>(),
+    interfaces: new Array<IContractInterface>(),
   },
   reducers: {
     addToken: {
@@ -39,6 +51,22 @@ export const chainDataSlice = createSlice({
         const contracts = state.contracts.filter(c => c.interface === contractInterface);
         for (const contract of contracts) {
           contract.abi = abi;
+        }
+      }
+    ).addCase(
+      fetchContractInterface.fulfilled,
+      (state, { payload: { contractInterface, abi } }) => {
+        if (!_.find(state.interfaces, { interface: contractInterface })) {
+          return {
+            ...state,
+            interfaces: [
+              ...state.interfaces,
+              {
+                abi,
+                interface: contractInterface,
+              }
+            ]
+          };
         }
       }
     );

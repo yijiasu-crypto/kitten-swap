@@ -13,6 +13,11 @@ export interface IContract {
   abi?: string;     // use string instead of object to avoid redux influence
 }
 
+export interface IContractInterface {
+  interface: string;
+  abi: string;
+}
+
 export interface IEthereumAccountPayload {
   active: boolean;
   account: string;

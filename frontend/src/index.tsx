@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './index.css';
+import 'react-toastify/dist/ReactToastify.css';
 
 import App from './pages/App';
 import reportWebVitals from './reportWebVitals';
@@ -13,6 +14,7 @@ import Web3Context from './web3/context';
 import './utils/load-chain-data';
 import { Provider } from 'react-redux';
 import store from './store';
+import { ToastContainer } from 'react-toastify';
 
 
 ReactDOM.render(
@@ -20,7 +22,10 @@ ReactDOM.render(
     <Provider store={store}>
       <Web3ReactProvider getLibrary={getWeb3Library}>
         <Web3Context>
-          <App />
+          <>
+            <ToastContainer />
+            <App />
+          </>
         </Web3Context>
       </Web3ReactProvider>
     </Provider>
