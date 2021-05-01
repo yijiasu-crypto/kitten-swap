@@ -43,6 +43,15 @@
     "extends": [
       "react-app",
       "react-app/jest"
+    ],
+    "overrides": [
+      {
+        "files": ["./src/**/*.ts?(x)"],
+        "rules": {
+          "semi": "off",
+          "@typescript-eslint/semi": ["error"]
+        }    
+      }
     ]
   },
   "browserslist": {

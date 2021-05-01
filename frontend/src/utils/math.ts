@@ -15,10 +15,10 @@ const fromStringNumber = (num: string, decimals: number, dp?: number): string =>
 
   const bn = new BigNumber(num ? num : 0);
   if (dp) {
-    return bn.dividedBy(10 ** decimals).toFixed(dp).toString()
+    return bn.dividedBy(10 ** decimals).toFixed(dp).toString();
   }
   else {
-    return bn.dividedBy(10 ** decimals).toString()
+    return bn.dividedBy(10 ** decimals).toString();
   }
 };
 

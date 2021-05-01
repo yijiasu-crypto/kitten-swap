@@ -35,7 +35,8 @@ const renderTxList = (recentTx: Array<IRecentTx>) => {
       </tr>
     );
   });
-}
+};
+
 const TransactionPanel = ({
   recentTx,
   onEmptyList,

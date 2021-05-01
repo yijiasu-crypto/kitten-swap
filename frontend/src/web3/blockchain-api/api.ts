@@ -5,7 +5,7 @@ import { KittenSwapRouter } from '../../contracts/types/KittenSwapRouter';
 import { TokenPair } from '../../models';
 import store from '../../store';
 import { getUnixTimestamp } from '../../utils/datetime';
-import { wrapWithWeb3Interface } from './base';
+import { wrapWithWeb3 } from './base';
 
 export const checkERC20Approval = async (
   web3: Web3,
@@ -15,7 +15,7 @@ export const checkERC20Approval = async (
   const { interfaces } = store.getState().chainData;
   const contractInterface = _.find(interfaces, { interface: 'IERC20' })!;
 
-  const tokenContract = wrapWithWeb3Interface<IERC20>(
+  const tokenContract = wrapWithWeb3<IERC20>(
     web3,
     contractAddress,
     contractInterface
@@ -35,7 +35,7 @@ export const grantERC20Approval = async (
   const { interfaces } = store.getState().chainData;
   const contractInterface = _.find(interfaces, { interface: 'IERC20' })!;
 
-  const tokenContract = wrapWithWeb3Interface<IERC20>(
+  const tokenContract = wrapWithWeb3<IERC20>(
     web3,
     contractAddress,
     contractInterface
@@ -49,10 +49,6 @@ export const grantERC20Approval = async (
     .send({
       from: owner,
     });
-  // const allowance = await tokenContract.methods
-  //   .allowance(owner, spender)
-  //   .call();
-  // return allowance !== '0';
 };
 
 export const performSwapOnRouter = async (
@@ -64,14 +60,11 @@ export const performSwapOnRouter = async (
 
   const { interfaces } = state.chainData;
 
-  // const bestPriceRef = state.ui.price.bestPriceRef!;
-  // const bestAdapter = _.find(state.chainData.contracts, { name: bestPriceRef.adapter });
-  // const minOutAmount = bestPriceRef.toAmount;
   const contractInterface = _.find(interfaces, {
     interface: 'KittenSwapRouter',
   })!;
 
-  const ksrContract = wrapWithWeb3Interface<KittenSwapRouter>(
+  const ksrContract = wrapWithWeb3<KittenSwapRouter>(
     web3,
     contractAddress,
     contractInterface
@@ -104,7 +97,7 @@ export const queryAdapterAmountOut = async (
     interface: 'IExchangeAdapter',
   })!;
 
-  const adapterContract = wrapWithWeb3Interface<IExchangeAdapter>(
+  const adapterContract = wrapWithWeb3<IExchangeAdapter>(
     web3,
     contractAddress,
     contractInterface

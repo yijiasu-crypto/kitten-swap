@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import {
   Button,
@@ -92,20 +92,20 @@ const SwapInput: React.FC<SwanInputProps> = ({ direction, tokens, onSelectToken,
         onSelectToken(token);
       }
     }
-  }
+  };
 
   const checkNumerical = (event: any) => {
     if (!/[0-9]|\./.test(event.key)) {
       event.preventDefault();
     }
-  }
+  };
 
-  const throttledCallback = _.throttle(() => { onUpdateInAmount!(inputRef.current!.value) }, 800, { trailing: true });
+  const throttledCallback = _.throttle(() => { onUpdateInAmount!(inputRef.current!.value); }, 800, { trailing: true });
   const textChange = () => {
     if (direction === 'from') {
       throttledCallback();
     }
-  }
+  };
 
   let inputBoxLabel = direction;
   let displayToAmount;

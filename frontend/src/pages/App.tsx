@@ -1,9 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import {
   Col,
   Container,
   Row,
-  Table,
 } from 'react-bootstrap';
 
 import SwapPanel from '../components/SwapPanel';
@@ -16,9 +15,8 @@ import { injected } from '../web3/hooks';
 import { useAppDispatch, useAppSelector } from '../store';
 import { ethereumSlice } from '../store/ethereum';
 import './App.css';
-import { IToken, OptionalTokenPair, TokenPair } from '../models';
+import { OptionalTokenPair, TokenPair } from '../models';
 import Web3 from 'web3';
-import _ from 'lodash';
 import { performSwap, queryAmountOut, uiSlice } from '../store/ui';
 import { toStringNumber } from '../utils/math';
 import BigNumber from 'bignumber.js';
@@ -31,22 +29,13 @@ const renderVerticalPadding = (height: number) => (
 
 
 function App() {
-  // const web3 = useWeb3React<Web3>();
-  // console.log(web3);
 
   const [tokenPair, setTokenPair] = useState<OptionalTokenPair>([undefined, undefined]);
   const web3Context = useWeb3React<Web3>();
-  // const startConnect = async () => {
-  //   
-  // }
 
   const ethereumState = useAppSelector(state => state.ethereum);
-  const chainDataState = useAppSelector(state => state.chainData);
-
   const tokens = useAppSelector(state => state.chainData.tokens);
-
   const dispatch = useAppDispatch();
-
   const uiState = useAppSelector(state => state.ui);
 
   const triggerConnect = () => {
@@ -68,7 +57,7 @@ function App() {
   const selectTokenPairListener = (pair: OptionalTokenPair) => {
     setTokenPair(pair);
     console.log(`Select with: `, pair);
-  }
+  };
 
   const performSwapListener = (pair: TokenPair, inAmount: string) => {
     console.log(`Perform with: `, pair);
@@ -80,7 +69,6 @@ function App() {
       .toFixed(0)
       .toString();
     
-    // dispatch(uiSlice.actions.becomeBusy());
     dispatch(performSwap({
       web3: web3Context.library!,
       tokenPair: tokenPair as TokenPair,
@@ -89,7 +77,7 @@ function App() {
       amountOutMin,
       adapterName: uiState.price.bestPriceRef!.adapter,
     }));
-  }
+  };
 
   const performUpdateToAmount = (amount: string) => {
     console.log(tokenPair);
@@ -109,7 +97,7 @@ function App() {
       }
     }
 
-  }
+  };
   
   const onEmptyTxList = () => dispatch(uiSlice.actions.clearAllTx());
   return (
@@ -141,25 +129,5 @@ function App() {
     </Container>
   );
 }
-
-  // useEffect(() => {
-
-  //   console.log(ethereumState);  
-  // });
-
-  // useEffect(() => {
-  //   if (ethereumState.active) {
-  //     console.log("Web3 is OK");
-  //     // (window as any).web3 = web3Context.library!;
-  //     const ksrContract = _.find(chainDataState.contracts, { name: "KittenSwapRouter" })!;
-  //     // (window as any).contract = ksrContract;      
-  //     const ksrRouter = wrapWithWeb3<KittenSwapRouter>(web3Context.library!, ksrContract);
-  //     ksrRouter.methods.getAdapterCount().call().then(e => console.log(`adatery c= ${e}`));
-  //     ksrRouter.methods.getAdapterNameByIndex(0).call().then(e => console.log(`adatery c= ${e}`));
-
-  //   }
-
-  // }, [ethereumState.active]);
-
 
 export default App;

@@ -5,7 +5,7 @@ import { toast } from 'react-toastify';
 import { chainDataSlice } from './chain';
 import { ethereumSlice } from './ethereum';
 import { performSwap, queryAmountOut, uiSlice } from './ui';
-import { persistStore, persistReducer } from 'redux-persist'
+import { persistStore, persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 
 const toBecomeBusyActions = [
@@ -28,40 +28,33 @@ const middleware: Middleware = store => next => action => {
     toast.error(action.error.message);
   }
   if (_.includes(toBecomeBusyActions, actionType)) {
-    store.dispatch(uiSlice.actions.becomeBusy())
+    store.dispatch(uiSlice.actions.becomeBusy());
   }
   if (_.includes(toReleaseBusyActions, actionType)) {
-    store.dispatch(uiSlice.actions.releaseBusy())
+    store.dispatch(uiSlice.actions.releaseBusy());
   }
   return next(action);
 
-}
+};
 
-// const persistConfig = {
-
-// }
-
-// const uiReducer = 
 const rootReducer = combineReducers({
   chainData: chainDataSlice.reducer,
   ethereum: ethereumSlice.reducer,
   ui: persistReducer({ key: 'root', storage, whitelist: ['recentTx']}, uiSlice.reducer),
 });
-    // ui: persistReducer({ key: 'root', storage, whitelist: ['recentTx'] }, uiSlice.reducer) as any,
-// const 
+
 const store = configureStore({
-  reducer: rootReducer, //persistReducer({ key: 'root', storage, whitelist: ['ui/recentTx'] }, rootReducer),
+  reducer: rootReducer,
   middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(middleware),
 });
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const persistor = persistStore(store);
-// setInterval(() => {
 
-// }, 5000);
-export type RootState = ReturnType<typeof store.getState>
-export type AppDispatch = typeof store.dispatch
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;
 
-export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector
-export const useAppDispatch = () => useDispatch<AppDispatch>()
+export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
+export const useAppDispatch = () => useDispatch<AppDispatch>();
 
 export default store;

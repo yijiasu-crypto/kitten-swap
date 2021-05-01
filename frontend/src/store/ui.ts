@@ -12,7 +12,7 @@ import {
   grantERC20Approval,
   performSwapOnRouter,
   queryAdapterAmountOut,
-} from '../web3/blockchain-api/erc20';
+} from '../web3/blockchain-api';
 
 interface IUiState {
   busy: boolean;
@@ -174,7 +174,7 @@ export const uiSlice = createSlice({
       }
     },
     clearAllTx: (state) => {
-      state.recentTx = []
+      state.recentTx = [];
     },
   },
   extraReducers: (builder) => {
@@ -193,7 +193,7 @@ export const uiSlice = createSlice({
         toast.success('Transaction Success!');
         setImmediate(() => {
           store.dispatch(uiSlice.actions.successTx({ txHash: txReceipt.transactionHash }));
-        })
+        });
         return state;
       });
   },
