@@ -172,7 +172,10 @@ export const uiSlice = createSlice({
       if (tx) {
         tx.status = 'rejected';
       }
-    }
+    },
+    clearAllTx: (state) => {
+      state.recentTx = []
+    },
   },
   extraReducers: (builder) => {
     builder

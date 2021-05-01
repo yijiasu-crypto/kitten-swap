@@ -9,7 +9,7 @@ import {
 import SwapPanel from '../components/SwapPanel';
 import PricePanel from '../components/PricePanel';
 import Header from '../components/Header';
-import TransactionList from '../components/TransactionList';
+import TransactionPanel from '../components/TransactionPanel';
 
 import { useWeb3React } from '@web3-react/core';
 import { injected } from '../web3/hooks';
@@ -111,6 +111,7 @@ function App() {
 
   }
   
+  const onEmptyTxList = () => dispatch(uiSlice.actions.clearAllTx());
   return (
     <Container>
       <Row className="large-vertical-padding" />
@@ -136,14 +137,7 @@ function App() {
       </Row>
       {renderVerticalPadding(20)}
 
-      <Row className="justify-content-md-center">
-        <Col style={{ width: '300px' }}>
-          <h4>Recent Transactions</h4>
-        </Col>
-      </Row>
-      <Row>
-        <TransactionList recentTx={uiState.recentTx} />
-      </Row>
+      <TransactionPanel onEmptyList={onEmptyTxList} recentTx={uiState.recentTx} />
     </Container>
   );
 }

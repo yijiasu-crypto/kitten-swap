@@ -80,3 +80,12 @@
   padding: 0;
 }
 
+.recent-tx {
+  display: flex;
+  align-items: center;
+  padding-bottom: 8px;
+}
+
+.recent-tx h4 {
+  flex-grow: 1;
+}
