@@ -1,10 +1,12 @@
-import { configureStore, Middleware } from '@reduxjs/toolkit';
+import { combineReducers, configureStore, Middleware } from '@reduxjs/toolkit';
 import _ from 'lodash';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import { chainDataSlice } from './chain';
 import { ethereumSlice } from './ethereum';
 import { performSwap, queryAmountOut, uiSlice } from './ui';
+import { persistStore, persistReducer } from 'redux-persist'
+import storage from 'redux-persist/lib/storage';
 
 const toBecomeBusyActions = [
   performSwap.pending.toString(),
@@ -35,15 +37,27 @@ const middleware: Middleware = store => next => action => {
 
 }
 
+// const persistConfig = {
+
+// }
+
+// const uiReducer = 
+const rootReducer = combineReducers({
+  chainData: chainDataSlice.reducer,
+  ethereum: ethereumSlice.reducer,
+  ui: persistReducer({ key: 'root', storage, whitelist: ['recentTx']}, uiSlice.reducer),
+});
+    // ui: persistReducer({ key: 'root', storage, whitelist: ['recentTx'] }, uiSlice.reducer) as any,
+// const 
 const store = configureStore({
-  reducer: {
-    chainData: chainDataSlice.reducer,
-    ethereum: ethereumSlice.reducer,
-    ui: uiSlice.reducer,
-  },
+  reducer: rootReducer, //persistReducer({ key: 'root', storage, whitelist: ['ui/recentTx'] }, rootReducer),
   middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(middleware),
 });
 
+const persistor = persistStore(store);
+// setInterval(() => {
+
+// }, 5000);
 export type RootState = ReturnType<typeof store.getState>
 export type AppDispatch = typeof store.dispatch
 
