@@ -11,7 +11,7 @@ This script will build all smart contracts inside `contracts`. This is a necessa
 
 ### `yarn test`
 
-This script will run some test cases that're runnable on a localhost development testnet. Some test cases, such as integration tests with Uniswap or Sushiswap, must be performed on a live testnet, use `yarn test:kovan` instead. Before running this script, use `yarn ganache` to create a localhost testnet and keep it running on the background.
+This script will run some test cases that're runnable on a localhost development testnet. Some test cases, such as integration tests with Uniswap or Sushiswap, must be performed on a live testnet, use `yarn test:kovan` instead. Before running this script, use `yarn ganache` to create a localhost testnet and keep it running in the background.
 
 ### `yarn test:kovan`
 
@@ -26,4 +26,4 @@ This script will generate `.d.ts` type definition files for smart contracts. Run
 
 A verified deployment of `KittenSwapRouter` is available at [0x96ab64514484FA3257Fe82A42F900cDb79b25B65](https://kovan.etherscan.io/address/0x96ab64514484FA3257Fe82A42F900cDb79b25B65).
 
-If you need to deploy a new instace of these smart contracts manually. Please run the test `2_KittenSwapRouter` by running `yarn test:kovan ./test/2_KittenSwapRouter.test.ts`. Once the test were successfully ran, there should be a file `test_deployment.json` generate on the root folder recording addresses of deployed smart contracts.
+If you need to deploy a new instance of these smart contracts manually. Please run the test `2_KittenSwapRouter` by running `yarn test:kovan ./test/2_KittenSwapRouter.test.ts`. Once the tests were successfully run, there should be a file `test_deployment.json` generated on the root folder recording addresses of deployed smart contracts.

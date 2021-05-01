@@ -4,9 +4,9 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 ## Notes
 
-1. Please build all smart contract first. Make sure they're built successfully then it's possible to build the frontend.
+1. Please build all smart contracts first. Make sure they're built successfully then it's possible to build the frontend.
 2. Run `yarn gen-sc-types` before running `yarn start`
-3. `./src/contract_data.json` stores all deployed smart contract address. If a newer version of smart contract is deployed, update corresponding addresses inside that JSON file.
+3. `./src/contract_data.json` stores all deployed smart contracts addresses. If a newer version of smart contract is deployed, update corresponding addresses inside that JSON file.
 
 
 ## Available Scripts
