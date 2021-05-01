@@ -22,7 +22,7 @@ const renderPlaceholder = () => {
 const renderTxList = (recentTx: Array<IRecentTx>) => {
   return recentTx.map((tx, index) => {
     return (
-      <tr>
+      <tr key={`txrecord-${index}`}>
         <td>{index + 1}</td>
         <td>{formatUnixTimestamp(tx.timestamp)}</td>
         <td>{tx.description}</td>

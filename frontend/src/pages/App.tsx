@@ -20,6 +20,8 @@ import Web3 from 'web3';
 import { fetchERC20Balance, performSwap, queryAmountOut, uiSlice } from '../store/ui';
 import { toStringNumber } from '../utils/math';
 import BigNumber from 'bignumber.js';
+import { Web3Error, Web3Modal } from './web3-modal';
+import { Optional } from '../utils/optional-type';
 
 const renderVerticalPadding = (height: number) => (
   <Row style={{height}}></Row>
@@ -31,6 +33,7 @@ const renderVerticalPadding = (height: number) => (
 function App() {
 
   const [tokenPair, setTokenPair] = useState<OptionalTokenPair>([undefined, undefined]);
+  const [web3Error, setWeb3Error] = useState<Optional<Web3Error>>();
   const web3Context = useWeb3React<Web3>();
 
   const ethereumState = useAppSelector(state => state.ethereum);
@@ -43,11 +46,16 @@ function App() {
     web3Context
       .activate(injected)
       .then(() => {
-        dispatch(ethereumSlice.actions.activate({
-          account: web3Context.account!,
-          chainId: web3Context.chainId!,
-          active: true
-        }));
+        if (!web3Context.active) {
+          setWeb3Error(Web3Error.NO_METAMASK);
+        }
+        else {
+          dispatch(ethereumSlice.actions.activate({
+            account: web3Context.account!,
+            chainId: web3Context.chainId!,
+            active: true
+          }));  
+        }
       })
       .catch((e) => {
         console.log(e);
@@ -113,6 +121,8 @@ function App() {
   
   const onEmptyTxList = () => dispatch(uiSlice.actions.clearAllTx());
   return (
+    <>
+    { web3Error ? <Web3Modal error={web3Error} /> : null}
     <Container>
       <Row className="large-vertical-padding" />
       <Header
@@ -124,6 +134,7 @@ function App() {
       <Row>
         <Col className="no-padding" xs={8}>
           <SwapPanel
+            enabled={ethereumState.active}
             tokens={tokens}
             balance={uiState.balance}
             bestPriceRef={uiState.price.bestPriceRef}
@@ -140,6 +151,7 @@ function App() {
 
       <TransactionPanel onEmptyList={onEmptyTxList} recentTx={uiState.recentTx} />
     </Container>
+    </>
   );
 }
 

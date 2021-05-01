@@ -26,7 +26,7 @@ const PricePanel: React.FC<{
           );
           const isBest = pr.adapter === bestPriceRef.adapter;
           return (
-            <li style={isBest ? { color: 'green', fontWeight: 'bold' } : {}}>
+            <li key={`compare-${pr.adapter}`} style={isBest ? { color: 'green', fontWeight: 'bold' } : {}}>
               {isBest ? '✅ ' : ''}
               {pr.adapter}:<br /> {fromAmount} {pr.fromToken.symbol} ={' '}
               {toAmount} {pr.toToken.symbol}
