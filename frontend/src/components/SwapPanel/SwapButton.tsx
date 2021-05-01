@@ -6,9 +6,10 @@ import './style.css';
 
 export enum SwapButtonStatus {
   OK = '🚀  Swap Now',
-  NOT_SELECTED = 'Please Select...',
+  NOT_SELECTED = 'Please elect...',
   IDENTICAL_PAIR = 'Two tokens must not be identical',
   INSUFFICENT_BALANCE = 'Insufficent balance',
+  NO_INPUT_AMOUNT = 'Please input amount...',
   BUSY = 'BUSY',
 }
 
@@ -23,7 +24,8 @@ export const SwapButton: React.FC<{
         buttonStatus === SwapButtonStatus.IDENTICAL_PAIR ||
         buttonStatus === SwapButtonStatus.INSUFFICENT_BALANCE
           ? 'danger'
-          : buttonStatus === SwapButtonStatus.NOT_SELECTED
+          : buttonStatus === SwapButtonStatus.NOT_SELECTED ||
+            buttonStatus === SwapButtonStatus.NO_INPUT_AMOUNT
           ? 'secondary'
           : 'primary'
       }

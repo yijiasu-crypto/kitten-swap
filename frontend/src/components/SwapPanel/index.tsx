@@ -48,7 +48,7 @@ const SwapPanel: React.FC<SwapPanelProps> = ({
   const [fromToken, setFromToken] = useState<Optional<IToken>>();
   const [toToken, setToToken] = useState<Optional<IToken>>();
   const [inAmount, setInAmount] = useState('0');
-  const [sufficentBalance, setSufficentBalance] = useState(false);
+  const [sufficentBalance, setSufficentBalance] = useState(true);
   const [swapButtonStatus, setSwapButtonStatus] = useState(
     SwapButtonStatus.NOT_SELECTED
   );
@@ -66,11 +66,15 @@ const SwapPanel: React.FC<SwapPanelProps> = ({
     const testHasSelected = !(fromToken === undefined || toToken === undefined);
     const testIdenticalPair =
       testHasSelected && fromToken?.symbol === toToken?.symbol;
+    
+    const hasInputAmount = inAmount !== '0';
 
     if (testIdenticalPair) {
       setSwapButtonStatus(SwapButtonStatus.IDENTICAL_PAIR);
     } else if (!testHasSelected) {
       setSwapButtonStatus(SwapButtonStatus.NOT_SELECTED);
+    } else if (!hasInputAmount) {
+      setSwapButtonStatus(SwapButtonStatus.NO_INPUT_AMOUNT);
     } else if (!sufficentBalance) {
       setSwapButtonStatus(SwapButtonStatus.INSUFFICENT_BALANCE);
     } else if (uiState.busy) {
@@ -78,7 +82,7 @@ const SwapPanel: React.FC<SwapPanelProps> = ({
     } else {
       setSwapButtonStatus(SwapButtonStatus.OK);
     }
-  }, [fromToken, toToken, sufficentBalance, uiState.busy]);
+  }, [fromToken, toToken, inAmount, sufficentBalance, uiState.busy]);
 
   return (
     <ListGroup>
