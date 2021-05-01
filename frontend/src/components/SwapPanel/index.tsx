@@ -96,7 +96,7 @@ const SwapPanel: React.FC<SwapPanelProps> = ({
           onUpdateInAmount={(hasSufficentBalance, amount) => {
             setSufficentBalance(hasSufficentBalance);
             setInAmount(amount);
-            if (swapButtonStatus === SwapButtonStatus.OK) {
+            if (swapButtonStatus === SwapButtonStatus.OK || swapButtonStatus === SwapButtonStatus.NO_INPUT_AMOUNT) {
               onUpdateInAmount(amount);
             }
           }}
