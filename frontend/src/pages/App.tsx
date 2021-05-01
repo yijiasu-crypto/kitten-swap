@@ -56,13 +56,13 @@ function App() {
   useEffect(() => {
     if (ethereumState.active) {
       for (const token of tokens) {
-        setImmediate(() => {
+        setTimeout(() => {
           dispatch(fetchERC20Balance({
             web3: web3Context.library!,
             token,
             owner: ethereumState.account
           }));
-        });
+        }, 4000);
       }  
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
