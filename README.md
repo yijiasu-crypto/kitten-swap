@@ -2,7 +2,7 @@
 
 GitHub Repo: https://github.com/yijiasu/kitten-swap
 
-Live Demo: [https://kitten-swap-h1mewi1n6-yijiasu.vercel.app/]
+Live Demo: https://kitten-swap-h1mewi1n6-yijiasu.vercel.app/
 
 KittenSwap is an Ethereum token swapping dApp that helps you to swap tokens at the best exchanging rate.
 
