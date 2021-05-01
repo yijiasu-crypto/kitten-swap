@@ -27,7 +27,7 @@ export default function Web3Context({ children }: { children: JSX.Element }) {
   useEffect(() => {
     if (triedEager && context.active) {
       // ONLY FOR DEBUG
-      (window as any).web3 = context.library!;
+      // (window as any).web3 = context.library!;
       store.dispatch(ethereumSlice.actions.activate({
         account: context.account!,
         chainId: context.chainId!,

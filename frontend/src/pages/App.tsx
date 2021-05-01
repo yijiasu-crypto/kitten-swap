@@ -13,8 +13,6 @@ import TransactionPanel from '../components/TransactionPanel';
 import { useWeb3React } from '@web3-react/core';
 import { injected } from '../web3/hooks';
 import { useAppDispatch, useAppSelector } from '../store';
-import { ethereumSlice } from '../store/ethereum';
-import './App.css';
 import { OptionalTokenPair, TokenPair } from '../models';
 import Web3 from 'web3';
 import { fetchERC20Balance, performSwap, queryAmountOut, uiSlice } from '../store/ui';
@@ -23,12 +21,11 @@ import BigNumber from 'bignumber.js';
 import { Web3Error, Web3Modal } from './web3-modal';
 import { Optional } from '../utils/optional-type';
 
+import './App.css';
+
 const renderVerticalPadding = (height: number) => (
   <Row style={{height}}></Row>
 );
-
-
-
 
 function App() {
 
@@ -46,15 +43,9 @@ function App() {
     web3Context
       .activate(injected)
       .then(() => {
-        if (!web3Context.active) {
+        console.log(web3Context);
+        if (typeof (window as any).web3 === 'undefined') {
           setWeb3Error(Web3Error.NO_METAMASK);
-        }
-        else {
-          dispatch(ethereumSlice.actions.activate({
-            account: web3Context.account!,
-            chainId: web3Context.chainId!,
-            active: true
-          }));  
         }
       })
       .catch((e) => {

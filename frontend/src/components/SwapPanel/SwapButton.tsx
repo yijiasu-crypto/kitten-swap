@@ -6,7 +6,7 @@ import './style.css';
 
 export enum SwapButtonStatus {
   OK = '🚀  Swap Now',
-  NOT_SELECTED = 'Please elect...',
+  NOT_SELECTED = 'Please select token pair...',
   IDENTICAL_PAIR = 'Two tokens must not be identical',
   INSUFFICENT_BALANCE = 'Insufficent balance',
   NO_INPUT_AMOUNT = 'Please input amount...',
