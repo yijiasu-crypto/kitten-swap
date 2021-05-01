@@ -62,6 +62,6 @@ In the design of `KittenSwap` system, the adapter part and router part are decou
 
 A verified deployment of  `KittenSwapRouter`  is available at  [0x96ab64514484FA3257Fe82A42F900cDb79b25B65](https://kovan.etherscan.io/address/0x96ab64514484FA3257Fe82A42F900cDb79b25B65).
 
-Please check https://github.com/yijiasu/kitten-swap/blob/master/chain/docs.md to get more details about the deployment pipeline.
+Please check https://github.com/yijiasu/kitten-swap/blob/master/chain/README.md to get more details about the deployment pipeline.
 
 
