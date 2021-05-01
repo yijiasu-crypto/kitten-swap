@@ -10,13 +10,110 @@ export interface KittenSwapRouterContract
   "new"(meta?: Truffle.TransactionDetails): Promise<KittenSwapRouterInstance>;
 }
 
-type AllEvents = never;
+export interface AdapterRegistered {
+  name: "AdapterRegistered";
+  args: {
+    adapterAddress: string;
+    adapterIdx: BN;
+    0: string;
+    1: BN;
+  };
+}
+
+export interface OwnershipTransferred {
+  name: "OwnershipTransferred";
+  args: {
+    previousOwner: string;
+    newOwner: string;
+    0: string;
+    1: string;
+  };
+}
+
+export interface Paused {
+  name: "Paused";
+  args: {
+    account: string;
+    0: string;
+  };
+}
+
+export interface Unpaused {
+  name: "Unpaused";
+  args: {
+    account: string;
+    0: string;
+  };
+}
+
+type AllEvents = AdapterRegistered | OwnershipTransferred | Paused | Unpaused;
 
 export interface KittenSwapRouterInstance extends Truffle.ContractInstance {
   _adapters(
     arg0: number | BN | string,
     txDetails?: Truffle.TransactionDetails
   ): Promise<string>;
+
+  /**
+   * Returns the address of the current owner.
+   */
+  owner(txDetails?: Truffle.TransactionDetails): Promise<string>;
+
+  /**
+   * Returns true if the contract is paused, and false otherwise.
+   */
+  paused(txDetails?: Truffle.TransactionDetails): Promise<boolean>;
+
+  /**
+   * Leaves the contract without owner. It will not be possible to call `onlyOwner` functions anymore. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby removing any functionality that is only available to the owner.
+   */
+  renounceOwnership: {
+    (txDetails?: Truffle.TransactionDetails): Promise<
+      Truffle.TransactionResponse<AllEvents>
+    >;
+    call(txDetails?: Truffle.TransactionDetails): Promise<void>;
+    sendTransaction(txDetails?: Truffle.TransactionDetails): Promise<string>;
+    estimateGas(txDetails?: Truffle.TransactionDetails): Promise<number>;
+  };
+
+  /**
+   * Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner.
+   */
+  transferOwnership: {
+    (newOwner: string, txDetails?: Truffle.TransactionDetails): Promise<
+      Truffle.TransactionResponse<AllEvents>
+    >;
+    call(
+      newOwner: string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<void>;
+    sendTransaction(
+      newOwner: string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<string>;
+    estimateGas(
+      newOwner: string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<number>;
+  };
+
+  pause: {
+    (txDetails?: Truffle.TransactionDetails): Promise<
+      Truffle.TransactionResponse<AllEvents>
+    >;
+    call(txDetails?: Truffle.TransactionDetails): Promise<void>;
+    sendTransaction(txDetails?: Truffle.TransactionDetails): Promise<string>;
+    estimateGas(txDetails?: Truffle.TransactionDetails): Promise<number>;
+  };
+
+  unpause: {
+    (txDetails?: Truffle.TransactionDetails): Promise<
+      Truffle.TransactionResponse<AllEvents>
+    >;
+    call(txDetails?: Truffle.TransactionDetails): Promise<void>;
+    sendTransaction(txDetails?: Truffle.TransactionDetails): Promise<string>;
+    estimateGas(txDetails?: Truffle.TransactionDetails): Promise<number>;
+  };
 
   getAdapterCount(txDetails?: Truffle.TransactionDetails): Promise<BN>;
 
@@ -30,7 +127,7 @@ export interface KittenSwapRouterInstance extends Truffle.ContractInstance {
     txDetails?: Truffle.TransactionDetails
   ): Promise<string>;
 
-  addNewAdapter: {
+  registerAdapter: {
     (adapterAddr: string, txDetails?: Truffle.TransactionDetails): Promise<
       Truffle.TransactionResponse<AllEvents>
     >;
@@ -44,6 +141,25 @@ export interface KittenSwapRouterInstance extends Truffle.ContractInstance {
     ): Promise<string>;
     estimateGas(
       adapterAddr: string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<number>;
+  };
+
+  unregisterAdapter: {
+    (
+      adapterIdx: number | BN | string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse<AllEvents>>;
+    call(
+      adapterIdx: number | BN | string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<void>;
+    sendTransaction(
+      adapterIdx: number | BN | string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<string>;
+    estimateGas(
+      adapterIdx: number | BN | string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<number>;
   };
@@ -96,6 +212,67 @@ export interface KittenSwapRouterInstance extends Truffle.ContractInstance {
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
 
+    /**
+     * Returns the address of the current owner.
+     */
+    owner(txDetails?: Truffle.TransactionDetails): Promise<string>;
+
+    /**
+     * Returns true if the contract is paused, and false otherwise.
+     */
+    paused(txDetails?: Truffle.TransactionDetails): Promise<boolean>;
+
+    /**
+     * Leaves the contract without owner. It will not be possible to call `onlyOwner` functions anymore. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby removing any functionality that is only available to the owner.
+     */
+    renounceOwnership: {
+      (txDetails?: Truffle.TransactionDetails): Promise<
+        Truffle.TransactionResponse<AllEvents>
+      >;
+      call(txDetails?: Truffle.TransactionDetails): Promise<void>;
+      sendTransaction(txDetails?: Truffle.TransactionDetails): Promise<string>;
+      estimateGas(txDetails?: Truffle.TransactionDetails): Promise<number>;
+    };
+
+    /**
+     * Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner.
+     */
+    transferOwnership: {
+      (newOwner: string, txDetails?: Truffle.TransactionDetails): Promise<
+        Truffle.TransactionResponse<AllEvents>
+      >;
+      call(
+        newOwner: string,
+        txDetails?: Truffle.TransactionDetails
+      ): Promise<void>;
+      sendTransaction(
+        newOwner: string,
+        txDetails?: Truffle.TransactionDetails
+      ): Promise<string>;
+      estimateGas(
+        newOwner: string,
+        txDetails?: Truffle.TransactionDetails
+      ): Promise<number>;
+    };
+
+    pause: {
+      (txDetails?: Truffle.TransactionDetails): Promise<
+        Truffle.TransactionResponse<AllEvents>
+      >;
+      call(txDetails?: Truffle.TransactionDetails): Promise<void>;
+      sendTransaction(txDetails?: Truffle.TransactionDetails): Promise<string>;
+      estimateGas(txDetails?: Truffle.TransactionDetails): Promise<number>;
+    };
+
+    unpause: {
+      (txDetails?: Truffle.TransactionDetails): Promise<
+        Truffle.TransactionResponse<AllEvents>
+      >;
+      call(txDetails?: Truffle.TransactionDetails): Promise<void>;
+      sendTransaction(txDetails?: Truffle.TransactionDetails): Promise<string>;
+      estimateGas(txDetails?: Truffle.TransactionDetails): Promise<number>;
+    };
+
     getAdapterCount(txDetails?: Truffle.TransactionDetails): Promise<BN>;
 
     getAdapterNameByIndex(
@@ -108,7 +285,7 @@ export interface KittenSwapRouterInstance extends Truffle.ContractInstance {
       txDetails?: Truffle.TransactionDetails
     ): Promise<string>;
 
-    addNewAdapter: {
+    registerAdapter: {
       (adapterAddr: string, txDetails?: Truffle.TransactionDetails): Promise<
         Truffle.TransactionResponse<AllEvents>
       >;
@@ -122,6 +299,25 @@ export interface KittenSwapRouterInstance extends Truffle.ContractInstance {
       ): Promise<string>;
       estimateGas(
         adapterAddr: string,
+        txDetails?: Truffle.TransactionDetails
+      ): Promise<number>;
+    };
+
+    unregisterAdapter: {
+      (
+        adapterIdx: number | BN | string,
+        txDetails?: Truffle.TransactionDetails
+      ): Promise<Truffle.TransactionResponse<AllEvents>>;
+      call(
+        adapterIdx: number | BN | string,
+        txDetails?: Truffle.TransactionDetails
+      ): Promise<void>;
+      sendTransaction(
+        adapterIdx: number | BN | string,
+        txDetails?: Truffle.TransactionDetails
+      ): Promise<string>;
+      estimateGas(
+        adapterIdx: number | BN | string,
         txDetails?: Truffle.TransactionDetails
       ): Promise<number>;
     };

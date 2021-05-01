@@ -43,6 +43,50 @@ export interface IExchangeAdapterInstance extends Truffle.ContractInstance {
     txDetails?: Truffle.TransactionDetails
   ): Promise<BN>;
 
+  swapExactTokensForTokens: {
+    (
+      amountIn: number | BN | string,
+      amountOutMin: number | BN | string,
+      path: string[],
+      to: string,
+      deadline: number | BN | string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse<AllEvents>>;
+    call(
+      amountIn: number | BN | string,
+      amountOutMin: number | BN | string,
+      path: string[],
+      to: string,
+      deadline: number | BN | string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<BN[]>;
+    sendTransaction(
+      amountIn: number | BN | string,
+      amountOutMin: number | BN | string,
+      path: string[],
+      to: string,
+      deadline: number | BN | string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<string>;
+    estimateGas(
+      amountIn: number | BN | string,
+      amountOutMin: number | BN | string,
+      path: string[],
+      to: string,
+      deadline: number | BN | string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<number>;
+  };
+
+  destroy: {
+    (txDetails?: Truffle.TransactionDetails): Promise<
+      Truffle.TransactionResponse<AllEvents>
+    >;
+    call(txDetails?: Truffle.TransactionDetails): Promise<void>;
+    sendTransaction(txDetails?: Truffle.TransactionDetails): Promise<string>;
+    estimateGas(txDetails?: Truffle.TransactionDetails): Promise<number>;
+  };
+
   methods: {
     getName(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
@@ -73,6 +117,50 @@ export interface IExchangeAdapterInstance extends Truffle.ContractInstance {
       tokenOut: string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<BN>;
+
+    swapExactTokensForTokens: {
+      (
+        amountIn: number | BN | string,
+        amountOutMin: number | BN | string,
+        path: string[],
+        to: string,
+        deadline: number | BN | string,
+        txDetails?: Truffle.TransactionDetails
+      ): Promise<Truffle.TransactionResponse<AllEvents>>;
+      call(
+        amountIn: number | BN | string,
+        amountOutMin: number | BN | string,
+        path: string[],
+        to: string,
+        deadline: number | BN | string,
+        txDetails?: Truffle.TransactionDetails
+      ): Promise<BN[]>;
+      sendTransaction(
+        amountIn: number | BN | string,
+        amountOutMin: number | BN | string,
+        path: string[],
+        to: string,
+        deadline: number | BN | string,
+        txDetails?: Truffle.TransactionDetails
+      ): Promise<string>;
+      estimateGas(
+        amountIn: number | BN | string,
+        amountOutMin: number | BN | string,
+        path: string[],
+        to: string,
+        deadline: number | BN | string,
+        txDetails?: Truffle.TransactionDetails
+      ): Promise<number>;
+    };
+
+    destroy: {
+      (txDetails?: Truffle.TransactionDetails): Promise<
+        Truffle.TransactionResponse<AllEvents>
+      >;
+      call(txDetails?: Truffle.TransactionDetails): Promise<void>;
+      sendTransaction(txDetails?: Truffle.TransactionDetails): Promise<string>;
+      estimateGas(txDetails?: Truffle.TransactionDetails): Promise<number>;
+    };
   };
 
   getPastEvents(event: string): Promise<EventData[]>;

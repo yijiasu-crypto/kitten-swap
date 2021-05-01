@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.4.22 <0.9.0;
 
 import "./uniswap/IUniswapV2Router02.sol";
@@ -7,17 +7,25 @@ import "./uniswap/IUniswapV2Pair.sol";
 import "./uniswap/IERC20.sol";
 
 import "./interface/IExchangeAdapter.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract UniswapExchangeAdapter is IExchangeAdapter {
 
     IUniswapV2Router02 public uniswapRouter;
+    address private _deployedRouter;
     string public adapterName;
     bytes private initCodeHash;
 
-    constructor(address _uniswapRouter, string memory _adapterName, bytes memory _initCodeHash) {
+    modifier onlyRouterCall () {
+      require(msg.sender == _deployedRouter, "ONLY_ALLOW_ROUTER_CALL");
+      _;
+    }
+  
+    constructor(address _uniswapRouter, string memory _adapterName, bytes memory _initCodeHash, address _ksrRouter) {
       uniswapRouter = IUniswapV2Router02(_uniswapRouter);
       adapterName = _adapterName;
       initCodeHash = _initCodeHash;
+      _deployedRouter = _ksrRouter;
     }
 
     // returns sorted token addresses, used to handle return values from pairs sorted in this order
@@ -67,7 +75,7 @@ contract UniswapExchangeAdapter is IExchangeAdapter {
         address[] calldata path,
         address to,
         uint deadline
-    ) override external returns (uint[] memory amounts) {
+    ) override external onlyRouterCall returns (uint[] memory amounts) {
       IERC20(path[0]).approve(address(uniswapRouter), 2**256 - 1);
       return uniswapRouter.swapExactTokensForTokens(amountIn, amountOutMin, path, to, deadline);
     }

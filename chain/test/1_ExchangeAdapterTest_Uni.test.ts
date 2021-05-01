@@ -17,8 +17,6 @@ import {
 const UniswapV2Factory = artifacts.require('IUniswapV2Factory');
 const UniswapV2Pair = artifacts.require('IUniswapV2Pair');
 const UniswapV2Router = artifacts.require('IUniswapV2Router02');
-const KittenSwapRouter = artifacts.require('KittenSwapRouter');
-const UniswapExchangeAdapter = artifacts.require('UniswapExchangeAdapter');
 
 contract('ExchangeAdapter For Uniswap', async (accounts) => {
 
@@ -27,16 +25,15 @@ contract('ExchangeAdapter For Uniswap', async (accounts) => {
   let uniFactory: IUniswapV2FactoryInstance;
   let uniRouter: IUniswapV2Router02Instance;
   let daiWethPair: IUniswapV2PairInstance;
-  let ksrInstance: KittenSwapRouterInstance;
-  let uniAdapter: UniswapExchangeAdapterInstance;
 
   let reserve0: BN;
   let reserve1: BN;
 
-  before(async () => {
+  before(async function() {
     const netId = await web3.eth.net.getId();
     if (netId !== 3 && netId !== 42) {
-      throw new Error("This test must be run under Ropsten or Kovan network");
+      console.log("This test must be run under Ropsten or Kovan network");
+      this.skip();
     }
   })
 

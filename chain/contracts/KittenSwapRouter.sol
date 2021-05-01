@@ -1,12 +1,27 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.4.22 <0.9.0;
 
 import "./interface/IExchangeAdapter.sol";
 import "./uniswap/IERC20.sol";
+import "@openzeppelin/contracts/security/Pausable.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract KittenSwapRouter {
+contract KittenSwapRouter is Ownable, Pausable {
 
   address[] public _adapters;
+
+  event AdapterRegistered(
+    address adapterAddress,
+    uint adapterIdx
+  );
+
+  function pause() external onlyOwner {
+    _pause();
+  }
+
+  function unpause() external onlyOwner {
+    _unpause();
+  }
 
   function getAdapterCount() view public returns (uint) {
     return _adapters.length;
@@ -22,11 +37,20 @@ contract KittenSwapRouter {
     adapterAddr = _adapters[idx];
   }
 
-  // TODO: this method should be protected
-  // call by contract owners only
-  function addNewAdapter(address adapterAddr) external {
+  function registerAdapter(address adapterAddr) external whenNotPaused onlyOwner {
     // TODO: check adapterAddr to be a valid adapter contract
     _adapters.push(adapterAddr);
+  }
+
+  function unregisterAdapter(uint adapterIdx) external whenNotPaused onlyOwner {
+    require(adapterIdx < _adapters.length);
+    require(_adapters[adapterIdx] != address(0x0));
+
+    if (adapterIdx != _adapters.length - 1) {
+      _adapters[adapterIdx] = _adapters[_adapters.length - 1];
+    }
+    _adapters.pop();
+    
   }
 
   function getBestQuote(
@@ -51,7 +75,7 @@ contract KittenSwapRouter {
       address[] calldata path,
       address to,
       uint deadline
-  ) external returns (uint[] memory amounts) {
+  ) external whenNotPaused returns (uint[] memory amounts) {
     require(path.length == 2, 'Only support direct swapping');
     address tokenIn = path[0];
     address tokenOut = path[1];

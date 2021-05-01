@@ -11,6 +11,7 @@ export interface UniswapExchangeAdapterContract
     _uniswapRouter: string,
     _adapterName: string,
     _initCodeHash: string,
+    _ksrRouter: string,
     meta?: Truffle.TransactionDetails
   ): Promise<UniswapExchangeAdapterInstance>;
 }
@@ -22,6 +23,15 @@ export interface UniswapExchangeAdapterInstance
   adapterName(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
   uniswapRouter(txDetails?: Truffle.TransactionDetails): Promise<string>;
+
+  destroy: {
+    (txDetails?: Truffle.TransactionDetails): Promise<
+      Truffle.TransactionResponse<AllEvents>
+    >;
+    call(txDetails?: Truffle.TransactionDetails): Promise<void>;
+    sendTransaction(txDetails?: Truffle.TransactionDetails): Promise<string>;
+    estimateGas(txDetails?: Truffle.TransactionDetails): Promise<number>;
+  };
 
   getName(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
@@ -53,10 +63,54 @@ export interface UniswapExchangeAdapterInstance
     txDetails?: Truffle.TransactionDetails
   ): Promise<BN>;
 
+  swapExactTokensForTokens: {
+    (
+      amountIn: number | BN | string,
+      amountOutMin: number | BN | string,
+      path: string[],
+      to: string,
+      deadline: number | BN | string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse<AllEvents>>;
+    call(
+      amountIn: number | BN | string,
+      amountOutMin: number | BN | string,
+      path: string[],
+      to: string,
+      deadline: number | BN | string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<BN[]>;
+    sendTransaction(
+      amountIn: number | BN | string,
+      amountOutMin: number | BN | string,
+      path: string[],
+      to: string,
+      deadline: number | BN | string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<string>;
+    estimateGas(
+      amountIn: number | BN | string,
+      amountOutMin: number | BN | string,
+      path: string[],
+      to: string,
+      deadline: number | BN | string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<number>;
+  };
+
   methods: {
     adapterName(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
     uniswapRouter(txDetails?: Truffle.TransactionDetails): Promise<string>;
+
+    destroy: {
+      (txDetails?: Truffle.TransactionDetails): Promise<
+        Truffle.TransactionResponse<AllEvents>
+      >;
+      call(txDetails?: Truffle.TransactionDetails): Promise<void>;
+      sendTransaction(txDetails?: Truffle.TransactionDetails): Promise<string>;
+      estimateGas(txDetails?: Truffle.TransactionDetails): Promise<number>;
+    };
 
     getName(txDetails?: Truffle.TransactionDetails): Promise<string>;
 
@@ -87,6 +141,41 @@ export interface UniswapExchangeAdapterInstance
       tokenOut: string,
       txDetails?: Truffle.TransactionDetails
     ): Promise<BN>;
+
+    swapExactTokensForTokens: {
+      (
+        amountIn: number | BN | string,
+        amountOutMin: number | BN | string,
+        path: string[],
+        to: string,
+        deadline: number | BN | string,
+        txDetails?: Truffle.TransactionDetails
+      ): Promise<Truffle.TransactionResponse<AllEvents>>;
+      call(
+        amountIn: number | BN | string,
+        amountOutMin: number | BN | string,
+        path: string[],
+        to: string,
+        deadline: number | BN | string,
+        txDetails?: Truffle.TransactionDetails
+      ): Promise<BN[]>;
+      sendTransaction(
+        amountIn: number | BN | string,
+        amountOutMin: number | BN | string,
+        path: string[],
+        to: string,
+        deadline: number | BN | string,
+        txDetails?: Truffle.TransactionDetails
+      ): Promise<string>;
+      estimateGas(
+        amountIn: number | BN | string,
+        amountOutMin: number | BN | string,
+        path: string[],
+        to: string,
+        deadline: number | BN | string,
+        txDetails?: Truffle.TransactionDetails
+      ): Promise<number>;
+    };
   };
 
   getPastEvents(event: string): Promise<EventData[]>;
