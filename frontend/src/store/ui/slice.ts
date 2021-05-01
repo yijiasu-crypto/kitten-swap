@@ -3,9 +3,9 @@ import BigNumber from 'bignumber.js';
 import _ from 'lodash';
 import { toast } from 'react-toastify';
 import store from '..';
-import { IPriceRef, IRecentTx } from '../../models';
+import { IPriceRef, IRecentTx, ITokenBalance } from '../../models';
 import { getUnixTimestamp } from '../../utils/datetime';
-import { queryAmountOut, performSwap } from './thunks';
+import { queryAmountOut, performSwap, fetchERC20Balance } from './thunks';
 import { IEnqueueTxPayload, IUiState } from './types';
 
 const calcBestPrice = (priceRefs: Array<IPriceRef>) => {
@@ -29,6 +29,7 @@ const calcBestPrice = (priceRefs: Array<IPriceRef>) => {
 export const uiSlice = createSlice({
   name: 'ui',
   initialState: {
+    balance: new Array<ITokenBalance>(),
     price: {
       bestPriceRef: undefined,
       priceRefs: new Array<IPriceRef>(),
@@ -71,6 +72,10 @@ export const uiSlice = createSlice({
     clearAllTx: (state) => {
       state.recentTx = [];
     },
+    // fetchAllTokenBalance: (state) => {
+    //   const tokens = store.getState().chainData.tokens;
+    // },
+
   },
   extraReducers: (builder) => {
     builder
@@ -90,6 +95,16 @@ export const uiSlice = createSlice({
           store.dispatch(uiSlice.actions.successTx({ txHash: txReceipt.transactionHash }));
         });
         return state;
+      })
+      .addCase(fetchERC20Balance.fulfilled, (state, { payload }) => {
+        const { token, balance } = payload;
+        const existedToken = _.find(state.balance, { token: { address: token.address } });
+        if (existedToken) {
+          existedToken.balance = balance;
+        }
+        else {
+          state.balance.push({ token, balance });
+        }
       });
   },
 });

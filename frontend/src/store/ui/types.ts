@@ -1,8 +1,9 @@
 
-import { IPriceRef, IRecentTx } from '../../models';
+import { IPriceRef, IRecentTx, ITokenBalance } from '../../models';
 
 export interface IUiState {
   busy: boolean;
+  balance: Array<ITokenBalance>;
   price: {
     bestPriceRef?: IPriceRef;
     priceRefs: Array<IPriceRef>;

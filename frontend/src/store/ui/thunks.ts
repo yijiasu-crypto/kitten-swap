@@ -2,9 +2,10 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import _ from 'lodash';
 import Web3 from 'web3';
 import store from '..';
-import { IPriceRef, TokenPair } from '../../models';
+import { IPriceRef, IToken, TokenPair } from '../../models';
 import { fromStringNumber } from '../../utils/math';
 import {
+  queryERC20Balance,
   checkERC20Approval,
   grantERC20Approval,
   performSwapOnRouter,
@@ -12,6 +13,15 @@ import {
 } from '../../web3/blockchain-api';
 
 import { uiSlice } from './slice';
+
+export const fetchERC20Balance = createAsyncThunk(
+  'ui/queryERC20Balance',
+  async (payload: { web3: Web3; token: IToken; owner: string }) => {
+    const { web3, token, owner } = payload;
+    const balance = await queryERC20Balance(web3, token.address, { owner });
+    return { token, balance };
+  }
+);
 
 export const queryAmountOut = createAsyncThunk(
   'ui/queryAmountOut',
@@ -93,6 +103,20 @@ export const performSwap = createAsyncThunk(
       })
     );
     console.log(swapTxReceipt);
+
+    setTimeout(() => {
+      store.dispatch(fetchERC20Balance({
+        web3,
+        token: tokenPair[0],
+        owner: ownerAddress
+      }));
+      store.dispatch(fetchERC20Balance({
+        web3,
+        token: tokenPair[1],
+        owner: ownerAddress
+      }));
+    });
+
 
     return swapTxReceipt;
   }

@@ -5,7 +5,7 @@ const toStringNumber = (num: string | number, decimals: number): string => {
     throw new Error('Invalid Decimal');
   }
   const bn = new BigNumber(num ? num : 0);
-  return bn.multipliedBy(10 ** decimals).toString();
+  return bn.multipliedBy(10 ** decimals).toFixed();
 };
 
 const fromStringNumber = (num: string, decimals: number, dp?: number): string => {
@@ -22,4 +22,13 @@ const fromStringNumber = (num: string, decimals: number, dp?: number): string =>
   }
 };
 
-export { toStringNumber, fromStringNumber };
+const stringNumberCompare = (a: string, b: string): number => {
+  if (a.length !== b.length) {
+    return a.length < b.length ? -1 : 1;
+  }
+  else {
+    return a.localeCompare(b);
+  }
+};
+
+export { toStringNumber, fromStringNumber, stringNumberCompare };

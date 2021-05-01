@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Col,
   Container,
@@ -17,7 +17,7 @@ import { ethereumSlice } from '../store/ethereum';
 import './App.css';
 import { OptionalTokenPair, TokenPair } from '../models';
 import Web3 from 'web3';
-import { performSwap, queryAmountOut, uiSlice } from '../store/ui';
+import { fetchERC20Balance, performSwap, queryAmountOut, uiSlice } from '../store/ui';
 import { toStringNumber } from '../utils/math';
 import BigNumber from 'bignumber.js';
 
@@ -35,6 +35,7 @@ function App() {
 
   const ethereumState = useAppSelector(state => state.ethereum);
   const tokens = useAppSelector(state => state.chainData.tokens);
+
   const dispatch = useAppDispatch();
   const uiState = useAppSelector(state => state.ui);
 
@@ -53,6 +54,21 @@ function App() {
         console.log(e);
       });
   };
+
+  useEffect(() => {
+    if (ethereumState.active) {
+      for (const token of tokens) {
+        setImmediate(() => {
+          dispatch(fetchERC20Balance({
+            web3: web3Context.library!,
+            token,
+            owner: ethereumState.account
+          }));
+        });
+      }  
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ethereumState.account, ethereumState.active, tokens]);
 
   const selectTokenPairListener = (pair: OptionalTokenPair) => {
     setTokenPair(pair);
@@ -113,10 +129,11 @@ function App() {
         <Col className="no-padding" xs={8}>
           <SwapPanel
             tokens={tokens}
+            balance={uiState.balance}
+            bestPriceRef={uiState.price.bestPriceRef}
             onSelectTokenPair={selectTokenPairListener}
             onPerformSwap={performSwapListener}
             onUpdateInAmount={performUpdateToAmount}
-            bestPriceRef={uiState.price.bestPriceRef}
           />
         </Col>
         <Col className="no-padding">

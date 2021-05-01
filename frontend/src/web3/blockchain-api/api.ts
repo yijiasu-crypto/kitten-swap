@@ -7,6 +7,26 @@ import store from '../../store';
 import { getUnixTimestamp } from '../../utils/datetime';
 import { wrapWithWeb3 } from './base';
 
+export const queryERC20Balance = async (
+  web3: Web3,
+  contractAddress: string,
+  { owner }: { owner: string }
+) => {
+  const { interfaces } = store.getState().chainData;
+  const contractInterface = _.find(interfaces, { interface: 'IERC20' })!;
+
+  const tokenContract = wrapWithWeb3<IERC20>(
+    web3,
+    contractAddress,
+    contractInterface
+  );
+  const balance = await tokenContract.methods
+    .balanceOf(owner)
+    .call();
+  return balance;
+};
+
+
 export const checkERC20Approval = async (
   web3: Web3,
   contractAddress: string,

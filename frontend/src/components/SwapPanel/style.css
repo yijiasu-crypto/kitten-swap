@@ -1,5 +1,5 @@
 .card {
-  height: 100px;
+  height: 120px;
   padding-top: 5px;
 }
 
@@ -11,4 +11,10 @@
 .card-button{
   height: 100px;
   padding-top: 25px;
+}
+
+.balance-label {
+  color: gray;
+  padding-top: 5px;
+  font-size: 0.9em;
 }

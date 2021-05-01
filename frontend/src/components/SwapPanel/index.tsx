@@ -9,17 +9,18 @@ import {
   ListGroup,
   Spinner,
 } from 'react-bootstrap';
-import { IPriceRef, IToken, OptionalTokenPair, TokenPair } from '../../models';
+import { IPriceRef, IToken, ITokenBalance, OptionalTokenPair, TokenPair } from '../../models';
 import { DoubleCallback, Optional, SingleCallback } from '../../utils/optional-type';
 import _ from 'lodash';
 
 import './style.css';
-import { fromStringNumber } from '../../utils/math';
+import { fromStringNumber, stringNumberCompare, toStringNumber } from '../../utils/math';
 import { useAppSelector } from '../../store';
 
 
 type SwanPanelProps = React.PropsWithChildren<{
   tokens: Array<IToken>;
+  balance: Array<ITokenBalance>;
   onSelectTokenPair: SingleCallback<OptionalTokenPair>;
   onPerformSwap: DoubleCallback<TokenPair, string>;
   onUpdateInAmount: SingleCallback<string>;
@@ -29,6 +30,7 @@ type SwanPanelProps = React.PropsWithChildren<{
 type SwanInputProps = React.PropsWithChildren<{
   direction: Direction;
   tokens: Array<IToken>;
+  balance: Array<ITokenBalance>;
   onSelectToken: SingleCallback<IToken>;
   onUpdateInAmount?: SingleCallback<string>
   bestPriceRef?: IPriceRef;
@@ -78,10 +80,33 @@ const SwapButton: React.FC<{
   </InputGroup>
 );
 
-const SwapInput: React.FC<SwanInputProps> = ({ direction, tokens, onSelectToken, onUpdateInAmount, bestPriceRef }) => {
+const SwapInput: React.FC<SwanInputProps> = ({ direction, tokens, balance, onSelectToken, onUpdateInAmount, bestPriceRef }) => {
   
   const [selectedToken, setSelectedToken] = useState<Optional<IToken>>();
+  const [displayBalance, setDisplayBalance] = useState('0');
+  const [insufficentError, setInsufficentError] = useState(false);
   const inputRef = React.createRef<HTMLInputElement>();
+
+  const [withBalanceToken, setWithBalanceToken] = useState<Optional<ITokenBalance>>();
+
+  useEffect(() => {
+    if (selectedToken) {
+      console.log('set setWithBalanceToken');
+      const withBalanceToken = _.find(balance, { token: { address: selectedToken.address } });
+      setWithBalanceToken(withBalanceToken);
+      if (withBalanceToken) {
+        setDisplayBalance(
+          `Balance: ${fromStringNumber(
+            withBalanceToken.balance,
+            withBalanceToken.token.decimals,
+          )} ${withBalanceToken.token.symbol}`
+        );
+      }
+    }
+    else {
+      setWithBalanceToken(undefined);
+    }
+  }, [balance, selectedToken]);
 
   const selectTokenListener = (eventKey: string | null) => {
     if (eventKey) {
@@ -100,7 +125,29 @@ const SwapInput: React.FC<SwanInputProps> = ({ direction, tokens, onSelectToken,
     }
   };
 
-  const throttledCallback = _.throttle(() => { onUpdateInAmount!(inputRef.current!.value); }, 800, { trailing: true });
+  const checkSufficentBalance = () => {
+    if (withBalanceToken) {
+      if (stringNumberCompare(withBalanceToken.balance, toStringNumber(inputRef.current!.value, selectedToken!.decimals)) === -1) {
+        console.log("balance not enough:" , withBalanceToken.balance, toStringNumber(inputRef.current!.value, selectedToken!.decimals));
+        setInsufficentError(true);
+        return false;
+      }
+      else {
+        setInsufficentError(false);
+        return true;
+      }
+    }
+    return true;
+  };
+
+  const throttledCallback = _.throttle(() => {
+    // check balance
+    if (checkSufficentBalance()) {
+      if (inputRef.current && onUpdateInAmount) {
+        onUpdateInAmount(inputRef.current.value); 
+      }
+    }
+  }, 1200, { trailing: true });
   const textChange = () => {
     if (direction === 'from') {
       throttledCallback();
@@ -114,6 +161,7 @@ const SwapInput: React.FC<SwanInputProps> = ({ direction, tokens, onSelectToken,
     inputBoxLabel += `  (VIA ${bestPriceRef.adapter})`;
     displayToAmount = fromStringNumber(bestPriceRef.toAmount, bestPriceRef.toToken.decimals);
   }
+
 
   return (
     <>
@@ -141,12 +189,19 @@ const SwapInput: React.FC<SwanInputProps> = ({ direction, tokens, onSelectToken,
           id={`swap-input-${direction}`}
         />
       </InputGroup>
+      {insufficentError ? (
+        <label className="balance-label">Insufficent Balance</label>
+      ) : !!withBalanceToken ? (
+        <label className="balance-label">{displayBalance}</label>
+      ) : (
+        ' '
+      )}
     </>
   );
 };
 
 
-const SwapPanel: React.FC<SwanPanelProps> = ({ tokens, onSelectTokenPair, onPerformSwap, onUpdateInAmount, bestPriceRef }) => {
+const SwapPanel: React.FC<SwanPanelProps> = ({ tokens, balance, onSelectTokenPair, onPerformSwap, onUpdateInAmount, bestPriceRef }) => {
 
   const [fromToken, setFromToken] = useState<Optional<IToken>>();
   const [toToken, setToToken] = useState<Optional<IToken>>();
@@ -187,6 +242,7 @@ const SwapPanel: React.FC<SwanPanelProps> = ({ tokens, onSelectTokenPair, onPerf
         <SwapInput
           direction="from"
           tokens={tokens}
+          balance={balance}
           onSelectToken={makeTokenSelector('from')}
           onUpdateInAmount={(amount) => {
             setInAmount(amount);
@@ -198,6 +254,7 @@ const SwapPanel: React.FC<SwanPanelProps> = ({ tokens, onSelectTokenPair, onPerf
         <SwapInput
           direction="to"
           tokens={tokens}
+          balance={balance}
           onSelectToken={makeTokenSelector('to')}
           bestPriceRef={bestPriceRef}
         />

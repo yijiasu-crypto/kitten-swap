@@ -20,11 +20,10 @@ const toReleaseBusyActions = [
   queryAmountOut.rejected.toString(),
 ];
 
-
-console.log(toBecomeBusyActions);
 const middleware: Middleware = store => next => action => {
   const actionType: string = action.type;
   if (actionType.endsWith('/rejected')) {
+    console.error(action.error);
     toast.error(action.error.message);
   }
   if (_.includes(toBecomeBusyActions, actionType)) {

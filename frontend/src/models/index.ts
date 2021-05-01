@@ -53,5 +53,10 @@ export interface IRecentTx {
   txHash: string;
 }
 
+export interface ITokenBalance {
+  token: IToken;
+  balance: string;
+}
+
 export type OptionalTokenPair = [Optional<IToken>, Optional<IToken>];
 export type TokenPair = [IToken, IToken];
