@@ -1,4 +1,4 @@
-# KittenSwap
+# 🐱 KittenSwap
 
 KittenSwap is an Ethereum token swapping dApp that helps you to swap tokens at the best exchanging rate.
 
