@@ -68,6 +68,7 @@ export const grantERC20Approval = async (
     )
     .send({
       from: owner,
+      gas: 60_000
     });
 };
 
@@ -102,7 +103,8 @@ export const performSwapOnRouter = async (
     beneficiaryAddress,
     deadline
   ).send({
-    from: beneficiaryAddress
+    from: beneficiaryAddress,
+    gas: 280_000
   });
 
 };

@@ -79,7 +79,7 @@ function App() {
     const stringNum = toStringNumber(inAmount, tokenPair[0]!.decimals);
     const amountOut = uiState.price.bestPriceRef!.toAmount;
     const amountOutMin = new BigNumber(amountOut)
-      .multipliedBy(900)
+      .multipliedBy(990)
       .dividedBy(1000)
       .toFixed(0)
       .toString();
