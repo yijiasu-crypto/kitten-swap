@@ -37,7 +37,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "sync-sc": "mkdir -p ./src/contracts && mkdir -p ./src/contracts/artifacts && cp ../chain/build/contracts/*.json ./src/contracts/artifacts",
+    "sync-sc": "mkdir -p ./src/contracts ./src/contracts/artifacts ./public/abi && cp ../chain/build/contracts/*.json ./src/contracts/artifacts && cp ../chain/build/contracts/*.json ./public/abi",
     "gen-sc-types": "yarn sync-sc && typechain --outDir ./src/contracts/types --target=web3-v1 --glob \"./src/contracts/artifacts/*.json\""
   },
   "eslintConfig": {

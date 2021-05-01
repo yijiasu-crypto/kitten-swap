@@ -4,6 +4,6 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    
+    "build:frontend": "./build.sh"
   }
 }
