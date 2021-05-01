@@ -91,7 +91,7 @@ const SwapInput: React.FC<SwanInputProps> = ({ direction, tokens, balance, onSel
 
   useEffect(() => {
     if (selectedToken) {
-      console.log('set setWithBalanceToken');
+      console.log('Updating balance...');
       const withBalanceToken = _.find(balance, { token: { address: selectedToken.address } });
       setWithBalanceToken(withBalanceToken);
       if (withBalanceToken) {
@@ -128,7 +128,6 @@ const SwapInput: React.FC<SwanInputProps> = ({ direction, tokens, balance, onSel
   const checkSufficentBalance = () => {
     if (withBalanceToken) {
       if (stringNumberCompare(withBalanceToken.balance, toStringNumber(inputRef.current!.value, selectedToken!.decimals)) === -1) {
-        console.log("balance not enough:" , withBalanceToken.balance, toStringNumber(inputRef.current!.value, selectedToken!.decimals));
         setInsufficentError(true);
         return false;
       }

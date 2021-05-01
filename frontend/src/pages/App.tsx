@@ -43,7 +43,6 @@ function App() {
     web3Context
       .activate(injected)
       .then(() => {
-        console.log('123');
         dispatch(ethereumSlice.actions.activate({
           account: web3Context.account!,
           chainId: web3Context.chainId!,
@@ -96,10 +95,7 @@ function App() {
   };
 
   const performUpdateToAmount = (amount: string) => {
-    console.log(tokenPair);
-    console.log(`performUpdateToAmount = ${amount}`);
     const stringNum = toStringNumber(amount, tokenPair[0]!.decimals);
-    console.log(`stringNum = ${stringNum}`);
     
     if (tokenPair[0] !== undefined && tokenPair[1] !== undefined) {
       if (stringNum !== '0') {

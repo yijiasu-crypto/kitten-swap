@@ -33,7 +33,6 @@ export const chainDataSlice = createSlice({
     addToken: {
       prepare: (token: IToken) => ({ payload: token }),
       reducer: (state, action: PayloadAction<IToken>) => {
-        console.log('123ggtt');
         state.tokens.push(action.payload);
       },
     },

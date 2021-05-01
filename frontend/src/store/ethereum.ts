@@ -20,7 +20,6 @@ export const ethereumSlice = createSlice({
     activate: {
       prepare: (payload: IEthereumAccountPayload) => ({ payload }),
       reducer: (state, action: PayloadAction<IEthereumAccountPayload>) => {
-        console.log(action.payload);
         return {
           ...state,
           ...action.payload,
