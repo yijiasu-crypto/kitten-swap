@@ -27,17 +27,17 @@
         {
           "name": "KittenSwapRouter",
           "interface": "KittenSwapRouter",
-          "address": "0x278A89420e64513E164e3a062D44f766dc85C4fD"
+          "address": "0x96ab64514484FA3257Fe82A42F900cDb79b25B65"
         },
         {
           "name": "SushiSwap_Adapter",
           "interface": "IExchangeAdapter",
-          "address": "0x147059fbbf511A150854Db27A5C6bbF7ea90004e"
+          "address": "0xD2a5F479F5617dbd1b3644872dF0F6bdc2816f5e"
         },
         {
           "name": "UniSwap_Adapter",
           "interface": "IExchangeAdapter",
-          "address": "0x42D5f069228A2Ef5344bFC1d400Fa94EFd4348C5"
+          "address": "0x966da43220b0ac164FA8dF590426dA9082684752"
         }
       ],
       "interfaces": [

@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import Web3 from 'web3';
-import { IERC20, IExchangeAdapter } from '../../contracts/types';
+import { IERC20 } from '../../contracts/types/IERC20';
+import { IExchangeAdapter } from '../../contracts/types/IExchangeAdapter';
 import { KittenSwapRouter } from '../../contracts/types/KittenSwapRouter';
 import { TokenPair } from '../../models';
 import store from '../../store';
