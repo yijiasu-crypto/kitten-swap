@@ -10,7 +10,16 @@ KittenSwap is an Ethereum token swapping dApp that helps you to swap tokens at t
 
 Currently, KittenSwap supports swapping from Uniswap and Sushiswap. More DEX and swapping protocols can be added by implementing and deploying more adapters.
 
-  
+### 0. Getting Started
+
+Before using KittenSwap, you will need some Kovan ETH. Get some free by following instructions here: https://faucet.kovan.network/
+
+1. Wrap some ETH to WETH. KittenSwap only supports token inputs. Use any DEX to do the wrapping. Go to https://app.uniswap.org/ and:
+	* Use Kovan network
+	* Select ETH -> WETH pair. 
+	* Don't wrap all your ETH balance otherwise you won't have balance for paying the gas fee
+2. Go back to KittenSwap and use any token pair to swap. If you see 0 WETH balance after wrapping, do a page refresh.
+3. After performing a swap, your transaction should be able to inspect on Etherscan.
 
 ### 1. How it works
 
