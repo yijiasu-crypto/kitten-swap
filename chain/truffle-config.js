@@ -99,6 +99,22 @@ module.exports = {
       gasPrice: 10000000000,  // 1 gwei (in wei)
     },
 
+    ethermint: {
+      provider: () =>
+        new HDWalletProvider({
+          mnemonic,
+          providerOrUrl:
+            'https://kovan.infura.io/v3/1e7aaee7027040c8a535bfbe50a910f5',
+          chainId: 42,
+        }),
+      network_id: 42, // Ropsten's id
+      gas: 5500000, // Ropsten has a lower block limit than mainnet
+      confirmations: 0, // # of confs to wait between deployments. (default: 0)
+      timeoutBlocks: 200, // # of blocks before a deployment times out  (minimum/default: 50)
+      skipDryRun: true, // Skip dry run before migrations? (default: false for public nets )
+      gasPrice: 10000000000,  // 1 gwei (in wei)
+    }
+
 
     // Useful for private networks
     // private: {
