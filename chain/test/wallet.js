@@ -1,33 +1,38 @@
 // !Attention!  These keys are taken from default ganache mnemonic:
-const mnemonic = 'tuna couch claim sorry artist asthma advice update luggage tonight car tree';
+const mnemonic_12 = 'tuna couch claim sorry artist asthma advice update luggage tonight car tree';
+const mnemonic_24 = 'yard similar hotel exercise calm cousin forget wisdom swallow fatal afraid what dog panther nose age ramp portion floor scene cruise soul strong rose';
+
+const mnemonic = mnemonic_24;
+
 // We need to have truffle and ganache launched with this mnemonic
 // to be able to sign with these keys and for test to work.
 // Corresponding addresses (aacounts in test) should be:
 const defaultAddresses = [
-    '0x0d38dfbe5d20983db4A9Fc3DAfdBafd9C0bE6702',
-    '0x9830EF2A1AA499e51c7CE54f8073CA6D459f7f49',
-    '0x7aa5E97A4e5Cc4A91FDd52A748830ffE6FECBA6B',
-    '0xA18b5936A7CFE4b0F65c3e80039D1B0608cA4f72',
-    '0x552E1551a407442B0c994180139725290e1a5150',
-    '0xD3B32fD4aB361202f24B52C0425C6ec8f9d975AF',
-    '0xA6060F5c80D09442f81a16765488b989E053803a',
-    '0xea518b3EAD22FD77710B33e1F223E8fbB1C36af4',
-    '0x9a5BC57c03B6448dCb4569696FEAC57a937c3A92',
-    '0xCA0668bDd4aa54B16bC0FB8a7f8D71679fe88fdb',
+    '0x90FdB51c13Ce085cE7F9c0dA8683B7327711b064',
+    '0xeaCBa4a0B94a7faE0eC4C3E5e303320cB6CAc0AA',
+    '0xBd2168238b5cE311B28ABB00BfC119f31E040b86',
+    '0x456c710472DAB617fd45264F0971D6be2415ACAB',
+    '0x7eFB761519b7fE74be72D303eDe99d81bE7d2813',
+    '0x8614b169b22A351BdDb45c150366DEE7Af3B26d6',
+    '0xC43383ddB4Cca76d5C0de69c19bCC64cC827fCEC',
+    '0x306aa6B89196DBdf917E0d01BC11e86F64A5567d',
+    '0xaaca7D818C1623e6C734595017273d50Da8e96fc',
+    '0xeE9f52Ba99cfD7f65Ac0a66164eb227db52118A7',
 ];
+
 // If account addresses provided by ganache in your test are different
 // signing will not work!
 const defaultTruffleTestKeys = [
-    '0x789a762fd020796fe686227a2f679d572ab1b1d560f823eec9783001fa2a7cc2',
-    '0xa8bb1eda544e0a2c8e4072da9a44af2113b1fca6abedcb0da319024fa3ed8b98',
-    '0x319a669114a33a091e059791a5cabee69c4b47f2ab6d9982fd229bcff07f96c7',
-    '0x10f235a38b4d50474dc46e23b28050bdcdc3ff7c6cfa522e8ea53322ae461f56',
-    '0xf2900b1f32bcbd0eb4996fe4e8419517a4206080ef37dfc48201b1607e5ea285',
-    '0x8a1efbdc4403746eab16dc4bca5635a981ae4217c2c90da9a1af63076b20fcb5',
-    '0x34c871fa59e8e0f6310a73f338f6a624a1a527e1684b90485c69bf2406834507',
-    '0x0e3c46d11dfba87d5d10d79f71d65bd9ee3379de9924c0a698f4a4e83edc10f7',
-    '0xc466073d552defa7cf9af6d1bf6fa966130952f7abf32bef4911f7d0e794fdb1',
-    '0x9b9ad94277b34f00fa0abbf74e128391066f780b46942e798b01f33bfb3a37a1',
+    '0x49a2c89120ffdf59157e6a29b7bb3210899915adc9ae758bf1a22b0f33000d05',
+    '0xf7675b1798667f97f8f71971e0eb810b0fbdd9369c220503b2832cfc1277c537',
+    '0x04adcfd1f251a66901b28e7edf473fb9af07edbb5a0f3a3a8541946341f5d486',
+    '0x736511a00b3de118cabdd105b2172469aa61337a947566065c359394e30af24c',
+    '0x3c8770ac7cb9a549729b245fc890ab031481f4f820ad9635037ad482a8582cc0',
+    '0x2b2d04cd9ba1d3ce3b959d8d22cc4cac6cc1fc8d2106a4d4518309afd137238e',
+    '0x5cdb3880debc4805e0023d41d11b075ba5eef2b847fa65edb4d9834b2bc0246f',
+    '0xd1b56484d4a2ad0aa7c529f019b83cf4a951164186ed0576f75f35b95c81a34f',
+    '0x4cc0a376d58e881c9995c8bad38275648db0e08b7d3edc3ff9ffe19f43b768e7',
+    '0x9715bbedb4ac68becee0bb82b49b68384f412dbb8b709f52ea05133865c19c3f',
 ];
 
 // this will combine default ganache addresses with respective private keys
